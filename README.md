@@ -1,15 +1,15 @@
 # LNSCompFE
 Front-End para las competiciones de Las Noches Skyperas.
 
-***POR EL MOMENTO, EN LA CARPETA **LNSJugar Batchs** SE ENCUENTRAN ARCHIVOS .BAT PARA LAS DISTINTAS COMPETICIONES (Y OTRO GENÉRICO)*
+*POR EL MOMENTO, EN LA CARPETA **LNSJugar Batchs** SE ENCUENTRAN ARCHIVOS .BAT PARA LAS DISTINTAS COMPETICIONES (Y OTRO GENÉRICO)*
 
-Aunque este repositorio es para la creación de un FrontEnd con ventanas, los .BAT ofrecen las mismas ventajas... y en mi opinión a la larga más cómoda
+Aunque este repositorio es para la creación de un FrontEnd con ventanas, los .BAT ofrecen las mismas ventajas... y en mi opinión, a la larga, son más cómodos de usar.
 
 # Por implementar #
 
 La idea es implementar la misma funcionalidad de los archivos .BAT en un entorno gráfico más amigable en vez de un menú de MS-DOS. Y tal vez añadir alguna chorraduca como el poder ver los screenshots.
 
-LNSCompFE es un pequeño Front-End pensado para facilitar un poco los intentos en los campeonatos de [Las Noches Skyperas](http:\\nochesskyperas.1foro.com). Aunque nada impide configurarse para su uso e interés personal, ya que ofrece alguna utilidad extra.
+LNSCompFE es un pequeño Front-End pensado para facilitar un poco los intentos en los campeonatos de [Las Noches Skyperas](http://nochesskyperas.1foro.com). Aunque nada impide configurarse para su uso e interés personal, ya que ofrece alguna utilidad extra.
 
 Las principales ventajas que ofrece respecto a usar directamente el interfaz de WolfMAME son:
 
