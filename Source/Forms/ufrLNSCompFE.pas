@@ -17,6 +17,7 @@ type
   { TfrmLNSCompFE }
 
   TfrmLNSCompFE = class(TfrmCHXForm)
+    iLogo: TImage;
     pBottom: TPanel;
     pMain: TPanel;
     pRight: TPanel;
@@ -24,6 +25,7 @@ type
     Splitter1: TSplitter;
     StatusBar1: TStatusBar;
     procedure FormCreate(Sender: TObject);
+
   private
 
   public
