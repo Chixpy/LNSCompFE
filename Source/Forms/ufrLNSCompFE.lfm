@@ -1,0 +1,55 @@
+inherited frmLNSCompFE: TfrmLNSCompFE
+  Left = 309
+  Top = 135
+  Caption = 'LNSCompFE'
+  OnCreate = FormCreate
+  object StatusBar1: TStatusBar[0]
+    Left = 4
+    Height = 23
+    Top = 453
+    Width = 632
+    Panels = <>
+  end
+  object pRight: TPanel[1]
+    Left = 466
+    Height = 337
+    Top = 58
+    Width = 170
+    Align = alRight
+    TabOrder = 1
+  end
+  object Splitter1: TSplitter[2]
+    Left = 457
+    Height = 337
+    Top = 58
+    Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
+  end
+  object pMain: TPanel[3]
+    Left = 4
+    Height = 337
+    Top = 58
+    Width = 449
+    Align = alClient
+    TabOrder = 3
+  end
+  object pTop: TPanel[4]
+    Left = 4
+    Height = 50
+    Top = 4
+    Width = 632
+    Align = alTop
+    TabOrder = 4
+  end
+  object pBottom: TPanel[5]
+    Left = 4
+    Height = 50
+    Top = 399
+    Width = 632
+    Align = alBottom
+    TabOrder = 5
+  end
+  inherited IniPropStorage: TIniPropStorage[6]
+  end
+end

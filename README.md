@@ -1,11 +1,11 @@
-# LNSCompFE
+## LNSCompFE ##
 Front-End para las competiciones de Las Noches Skyperas.
 
 *POR EL MOMENTO, EN LA CARPETA **LNSJugar Batchs** SE ENCUENTRAN ARCHIVOS .BAT PARA LAS DISTINTAS COMPETICIONES (Y OTRO GENÉRICO)*
 
 Aunque este repositorio es para la creación de un FrontEnd con ventanas, los .BAT ofrecen las mismas ventajas... y en mi opinión, a la larga, son más cómodos de usar.
 
-# Por implementar #
+## Por implementar ##
 
 La idea es implementar la misma funcionalidad de los archivos .BAT en un entorno gráfico más amigable en vez de un menú de MS-DOS. Y tal vez añadir alguna chorraduca como el poder ver los screenshots.
 
