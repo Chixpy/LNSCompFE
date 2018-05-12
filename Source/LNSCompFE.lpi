@@ -34,7 +34,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\CHXPas\Forms;..\CHXPas\Frames;..\CHXPas\Units;..\CHXPas\Misc"/>
+            <OtherUnitFiles Value="..\CHXPas\Forms;..\CHXPas\Frames;..\CHXPas\Units;..\CHXPas\Misc;..\CHXPas\Abstract"/>
             <UnitOutputDirectory Value="..\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -73,7 +73,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="7">
+    <Units Count="17">
       <Unit0>
         <Filename Value="LNSCompFE.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -88,7 +88,9 @@
       <Unit2>
         <Filename Value="..\CHXPas\Frames\ufCHXFrame.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCHXFrame"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\CHXPas\Units\uCHXImageUtils.pas"/>
@@ -109,6 +111,55 @@
         <Filename Value="..\CHXPas\Misc\uVersionSupport.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="..\CHXPas\Abstract\uaCHXConfig.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="Classes\ucLNSCFEConfig.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\CHXPas\Abstract\uaCHXStorable.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\CHXPas\Frames\ufCHXImgListPreview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\CHXPas\Units\uCHXRscStr.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\CHXPas\Units\uCHXConst.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\CHXPas\Frames\ufCHXStrLstPreview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\CHXPas\Frames\ufCHXImgViewer.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\CHXPas\Frames\ufCHXPropEditor.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCHXPropEditor"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="Frames\ufLNSCFEConfig.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmLNSCFEConfig"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit16>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -119,7 +170,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="forms;..\CHXPas\Forms;..\CHXPas\Frames;..\CHXPas\Units;..\CHXPas\Misc"/>
+      <OtherUnitFiles Value="forms;..\CHXPas\Forms;..\CHXPas\Frames;..\CHXPas\Units;..\CHXPas\Misc;..\CHXPas\Abstract;Classes;Frames"/>
       <UnitOutputDirectory Value="..\lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

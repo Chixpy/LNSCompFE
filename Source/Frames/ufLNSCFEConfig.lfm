@@ -1,0 +1,89 @@
+inherited fmLNSCFEConfig: TfmLNSCFEConfig
+  Height = 322
+  Width = 332
+  ClientHeight = 322
+  ClientWidth = 332
+  DesignLeft = 379
+  DesignTop = 197
+  inherited pButtons: TPanel
+    Top = 296
+    Width = 332
+    ClientWidth = 332
+    inherited chkCloseOnSave: TCheckBox
+      Left = 35
+    end
+    inherited bSave: TBitBtn
+      Left = 119
+    end
+    inherited bCancel: TBitBtn
+      Left = 216
+    end
+  end
+  object gbxMAMEConfig: TGroupBox[1]
+    Left = 0
+    Height = 105
+    Top = 0
+    Width = 332
+    Align = alTop
+    Caption = 'Configuración (Wolf)MAME'
+    ClientHeight = 85
+    ClientWidth = 328
+    TabOrder = 1
+    object lMAMEExe: TLabel
+      Left = 0
+      Height = 15
+      Top = 0
+      Width = 328
+      Align = alTop
+      Caption = 'Ejecutable de MAME'
+      ParentColor = False
+    end
+    object eMAMEExe: TFileNameEdit
+      Left = 0
+      Height = 23
+      Top = 15
+      Width = 328
+      FilterIndex = 0
+      HideDirectories = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      Align = alTop
+      MaxLength = 0
+      TabOrder = 0
+    end
+  end
+  object gbxJuegos: TGroupBox[2]
+    Left = 0
+    Height = 183
+    Top = 109
+    Width = 332
+    Align = alClient
+    Caption = 'Juegos'
+    ClientHeight = 163
+    ClientWidth = 328
+    TabOrder = 2
+    object mJuegos: TMemo
+      Left = 0
+      Height = 148
+      Top = 15
+      Width = 328
+      Align = alClient
+      ScrollBars = ssAutoVertical
+      TabOrder = 0
+    end
+    object lJuegos: TLabel
+      Left = 0
+      Height = 15
+      Top = 0
+      Width = 328
+      Align = alTop
+      Caption = 'Un identificador de juego por cada línea'
+      ParentColor = False
+      WordWrap = True
+    end
+  end
+  inherited alPropEditor: TActionList[3]
+  end
+  inherited ilPropEditor: TImageList[4]
+  end
+end

@@ -9,7 +9,8 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms,
   // CHX forms
-  ufrCHXForm, ufrLNSCompFE;
+  ufrCHXForm, uCHXRscStr, uCHXConst, ufCHXStrLstPreview, ufCHXImgViewer,
+  uaCHXStorable, ufrLNSCompFE, ucLNSCFEConfig, ufLNSCFEConfig;
 
 {$R *.res}
 
