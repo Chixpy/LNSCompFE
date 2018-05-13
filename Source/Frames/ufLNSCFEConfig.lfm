@@ -21,12 +21,13 @@ inherited fmLNSCFEConfig: TfmLNSCFEConfig
   end
   object gbxMAMEConfig: TGroupBox[1]
     Left = 0
-    Height = 105
+    Height = 96
     Top = 0
     Width = 332
     Align = alTop
+    AutoSize = True
     Caption = 'Configuración (Wolf)MAME'
-    ClientHeight = 85
+    ClientHeight = 76
     ClientWidth = 328
     TabOrder = 1
     object lMAMEExe: TLabel
@@ -43,7 +44,11 @@ inherited fmLNSCFEConfig: TfmLNSCFEConfig
       Height = 23
       Top = 15
       Width = 328
+      DialogTitle = 'Ejecutable de WolfMAME'
+      DialogOptions = [ofNoChangeDir, ofEnableSizing, ofViewDetail]
+      Filter = 'Ejecutables|*.exe;*.bat|Todos los archivos|*.*'
       FilterIndex = 0
+      DefaultExt = 'exe'
       HideDirectories = False
       ButtonWidth = 23
       NumGlyphs = 1
@@ -51,20 +56,42 @@ inherited fmLNSCFEConfig: TfmLNSCFEConfig
       MaxLength = 0
       TabOrder = 0
     end
+    object lImages: TLabel
+      Left = 0
+      Height = 15
+      Top = 38
+      Width = 328
+      Align = alTop
+      Caption = 'Imágenes'
+      ParentColor = False
+    end
+    object eImagesFolder: TDirectoryEdit
+      Left = 0
+      Height = 23
+      Top = 53
+      Width = 328
+      DialogOptions = [ofNoChangeDir, ofEnableSizing, ofViewDetail]
+      ShowHidden = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      Align = alTop
+      MaxLength = 0
+      TabOrder = 1
+    end
   end
   object gbxJuegos: TGroupBox[2]
     Left = 0
-    Height = 183
-    Top = 109
+    Height = 192
+    Top = 100
     Width = 332
     Align = alClient
     Caption = 'Juegos'
-    ClientHeight = 163
+    ClientHeight = 172
     ClientWidth = 328
     TabOrder = 2
     object mJuegos: TMemo
       Left = 0
-      Height = 148
+      Height = 157
       Top = 15
       Width = 328
       Align = alClient

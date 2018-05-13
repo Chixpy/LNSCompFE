@@ -1,31 +1,77 @@
 @ECHO off
-:: Solo probado con Win10, no me hago responsable de que no funcione o
-::   cause alg£n da¤o o p‚rdida de datos.
+:: Copyright (C) 2017-2018 Chixpy
+:: https://github.com/Chixpy/LNSCompFE
+::
+:: This program is free software: you can redistribute it and/or modify
+:: it under the terms of the GNU General Public License as published by
+:: the Free Software Foundation, either version 3 of the License, or
+:: (at your option) any later version.
+::
+:: This program is distributed in the hope that it will be useful,
+:: but WITHOUT ANY WARRANTY; without even the implied warranty of
+:: MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+:: GNU General Public License for more details.
+::
+:: You should have received a copy of the GNU General Public License
+:: along with this program.  If not, see <http://www.gnu.org/licenses/>.
+::
+:: ---------------------------------------------------------------------
+::
+:: Solo probado con Win10, muy posiblemente funcione en WinVista e incluso 
+::   WinXP; pero no me hago responsable de que no funcione o cause alg£n da¤o
+::   o p‚rdida de datos.
+::
+:: El programa est  pensado para ejecutarse desde el mismo directorio que
+::   el ejecutable de (Wolf)MAME y con los directorios INP, NVRAM, DIFF,
+::   HI y CFG en sus ubicaciones por defecto.
+::
+:: TODO: Cosas por hacer... 
+::   * Cambiar la p gina de c¢digos de la consola y este archivo a UTF8;
+::     (chcp 65001) No afecta para nada m s que los acentos en los mensajes,
+::      pero ser¡a elegante y funcionar¡an independientemente del lenguaje
+::      por defecto de Windows
+::   * Usar un fichero auxiliar de config donde se definan las variables
+::     principales y a¤adir un m‚todo para crearlo desde el propio Batch.
+::   * Poder grabar con un estado inicial de la NVRAM, dicho de otro modo:
+::     1. Guardar el estado actual.
+::     2. Restaurar el estado inicial para grabar.
+::        (¨D¢nde deber¡a estar guardado previamente?)
+::     3. Ejecutar MAME.
+::     4. Restaurar el estado actual. 
+::        (o preguntar si se quiere mantener la NVRAM generada...)
+::     5. Hacer una copia del estado inicial si la partida se conserva.
+::        (¨D¢nde lo guardo, junto al inp?)
+::     Esto implica que en CrearAVI o ReproducirINP en el paso 2
+::       hay que restaurar el estado inicial correspondiente a cada partida.
+::   * Poder definir un MAME que est  en otro directorio distinto al Batch...
+::     (sto realmente no tengo ning£n inter‚s por hacerlo)
+::     
+
 GOTO BatchMain
 
 :: VARIABLES PRINCIPALES ======================================================
 :BatchInit
 :: Aqu¡ van las variables iniciales para no tener que estar buscando en
 ::   el fichero.
-:: TODO: Posiblemente usar un fichero auxiliar donde definirlas y a¤adir un
-::   m‚todo para crearlo.
 
 :: Preguntamos el nombre del jugador
 SET /p $LNSJugador=Escribe tus iniciales o nombre: 
 :: Para que no est‚ preguntando:
 ::SET $LNSJugador=CHX
 
-SET $LNSFichero1=knights
-SET $LNSJuego1=Knights of the Round
-SET $LNSFichero2=shinobi
-SET $LNSJuego2=Shinobi
-SET $LNSFichero3=toki
-SET $LNSJuego3=Toki
-SET $LNSFechaFin=11/02/18
+SET $LNSFichero1=fichero1
+SET $LNSJuego1=Juego1
+SET $LNSFichero2=fichero2
+SET $LNSJuego2=Juego2
+SET $LNSFichero3=fichero3
+SET $LNSJuego3=Juego3
+SET $LNSFechaFin=DD/MM/AA
+
+SET $LNSEjecutable=mamearcade.exe
 
 GOTO :EOF
 
-:: PROGRAMA PRINCIPAL =========================================================
+:: COMPROBACIONES INICIALES ===================================================
 :BatchMain
 
 :: Comprobando que se pueden usar las CMDEXT
@@ -47,12 +93,12 @@ IF "%CMDEXTVERSION%"=="" (
 )
  
 CALL :BatchInit
-CALL :BatchMenu
+CALL :BatchRun
 
 GOTO BatchEnd
 
-:: MENU PRINCIPAL =============================================================
-:BatchMenu
+:: PROGRAMA PRINCIPAL =========================================================
+:BatchRun
 :: Definiendo unos valores por defecto
 IF NOT DEFINED $LNSFichAct (
   SET $LNSFichAct=%$LNSFichero1%
@@ -84,44 +130,44 @@ ECHO  --------------------------------------------------------------------------
 CHOICE /c:123ERVP0OA > NUL
 IF ERRORLEVEL 10 (
   CALL :LNSAyuda
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 9 GOTO :EOF
 IF ERRORLEVEL 8 GOTO :EOF
 IF ERRORLEVEL 7 (
   CALL :LNSPracticar "%$LNSFichAct%" "%$LNSJuegAct%"
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 6 (
   CALL :LNSCrearAVI "%$LNSFichAct%" "%$LNSJuegAct%"
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 5 (
   CALL :LNSReprINP "%$LNSFichAct%" "%$LNSJuegAct%"
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 4 (
   CALL :LNSCrearINP "%$LNSFichAct%" "%$LNSJuegAct%"
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 3 (
   SET $LNSFichAct=%$LNSFichero3%
   SET $LNSJuegAct=%$LNSJuego3%
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 2 (
   SET $LNSFichAct=%$LNSFichero2%
   SET $LNSJuegAct=%$LNSJuego2%
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 IF ERRORLEVEL 1 (
   SET $LNSFichAct=%$LNSFichero1%
   SET $LNSJuegAct=%$LNSJuego1%
-  GOTO BatchMenuEnd
+  GOTO BatchRunEnd
 )
 
-:BatchMenuEnd
-GOTO BatchMenu
+:BatchRunEnd
+GOTO BatchRun
 
 :: AYUDA ======================================================================
 :LNSAyuda
@@ -257,7 +303,7 @@ ECHO -------------
 SET $LNSFecha1=%date%
 SET $LNSTiempo1=%time:~0,8%
 
-mamearcade %$LNSFichAct% -input_directory inp -afs -throttle -speed 1 -rec %$LNSFichAct%.inp
+"%LNSEjecutable%" %$LNSFichAct% -input_directory inp -afs -throttle -speed 1 -rec %$LNSFichAct%.inp
 
 SET $LNSTiempo2=%time:~0,8%
 SET $LNSFecha2=%date%
@@ -289,7 +335,7 @@ if "%$LNSMinuto2:~0,1%" == "0" SET $LNSMinuto2=%$LNSMinuto2:~1,1%
 SET $LNSSeg2=%$LNSTiempo2:~6,2%
 if "%$LNSSeg2:~0,1%" == "0" SET $LNSSeg2=%$LNSSeg2:~1,1%
 
-:: A fin de mes, siempre que la partida no empiece dos o m s d¡as antes del
+:: A fin de mes, siempre que la partida empiece dos o m s d¡as antes del
 ::   fin del mes y no dure m s de un mes...
 IF %$LNSDia1% GTR %$LNSDia2% SET /a $LNSDia2=%$LNSDia2%+%$LNSDia1%
 
@@ -365,7 +411,7 @@ GOTO LNSCrearINPEnd
 ENDLOCAL
 GOTO :EOF
 
-:: CREAR INP ==================================================================
+:: REPRODUCIR INP ==================================================================
 :LNSReprINP
 :: Necesita:
 :: ú $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensi¢n)
@@ -375,9 +421,9 @@ SET $LNSFichAct=%~1
 SET $LNSJuegAct=%~2
 
 CLS
-ECHO -------------
-ECHO GRABANDO INP: %$LNSJuegAct%
-ECHO -------------
+ECHO -----------------
+ECHO REPRODUCIENDO INP: %$LNSJuegAct%
+ECHO -----------------
 ECHO.
 
 IF NOT DEFINED $LNSFichAct (
@@ -404,7 +450,7 @@ SET $SubSFFichero=%$SubSFFichero:~4%
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-mamearcade %$LNSFichAct% -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
+"%LNSEjecutable%" %$LNSFichAct% -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
 PAUSE
 
 CALL :BorrarNVRAM "%$LNSFichAct%"
@@ -453,7 +499,7 @@ SET $SubSFFichero=%$SubSFFichero:~4,-4%
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-mamearcade %$LNSFichAct% -noafs -fs 0 -nothrottle -pb "%$SubSFFichero%.inp" -exit_after_playback -aviwrite "%$SubSFFichero%.avi"
+"%LNSEjecutable%" %$LNSFichAct% -noafs -fs 0 -nothrottle -pb "%$SubSFFichero%.inp" -exit_after_playback -aviwrite "%$SubSFFichero%.avi"
 PAUSE
 
 CALL :BorrarNVRAM "%$LNSFichAct%"
@@ -487,7 +533,7 @@ IF NOT DEFINED $LNSFichAct (
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-mamearcade %$LNSFichAct% 
+"%LNSEjecutable%" %$LNSFichAct% 
 PAUSE
 
 :LNSPracticarEnd

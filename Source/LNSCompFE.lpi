@@ -144,7 +144,9 @@
       <Unit14>
         <Filename Value="..\CHXPas\Frames\ufCHXImgViewer.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCHXImgViewer"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\CHXPas\Frames\ufCHXPropEditor.pas"/>

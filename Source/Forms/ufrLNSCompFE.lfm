@@ -9,6 +9,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     Height = 23
     Top = 453
     Width = 632
+    AutoHint = True
     Panels = <>
   end
   object Splitter1: TSplitter[1]
@@ -33,6 +34,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     object rgbJuegos: TRadioGroup
       Left = 5
       Height = 237
+      Hint = 'Selecciona el juego'
       Top = 38
       Width = 267
       Align = alClient
@@ -2430,35 +2432,31 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     left = 304
     top = 136
     object actEditarConfig: TAction
-      Category = 'Acciones'
+      Category = 'Config'
       Caption = 'Editar configuración'
       Hint = 'Abre el formulario para editar la configuración.'
       OnExecute = actEditarConfigExecute
-      ShortCut = 67
     end
     object actGrabarINP: TAction
       Category = 'Acciones'
       Caption = 'Jugar y grabar INP'
       Hint = 'Comienza una partida y grabar un archivo INP'
-      ShortCut = 69
     end
     object actGrabarAVI: TAction
       Category = 'Acciones'
       Caption = 'Crear AVI'
       Hint = 'Crea un archivo AVi a partir de una partida guardada.'
-      ShortCut = 86
     end
     object actProbarJuego: TAction
       Category = 'Acciones'
       Caption = 'Probar juego'
       Hint = 'Comienza una partida SIN grabar archivo INP'
-      ShortCut = 80
+      OnExecute = actProbarJuegoExecute
     end
     object actReproducirINP: TAction
       Category = 'Acciones'
       Caption = 'Reproducir INP'
       Hint = 'Reproduce una partida guardada.'
-      ShortCut = 82
     end
   end
 end

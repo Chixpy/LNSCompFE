@@ -17,9 +17,11 @@ type
   { TfmLNSCFEConfig }
 
   TfmLNSCFEConfig = class(TfmCHXPropEditor)
+    eImagesFolder: TDirectoryEdit;
     eMAMEExe: TFileNameEdit;
     gbxJuegos: TGroupBox;
     gbxMAMEConfig: TGroupBox;
+    lImages: TLabel;
     lJuegos: TLabel;
     lMAMEExe: TLabel;
     mJuegos: TMemo;
@@ -61,7 +63,8 @@ end;
 
 procedure TfmLNSCFEConfig.DoClearFrameData;
 begin
-  eMAMEExe.Clear;
+  eMAMEExe.Text := '';
+  eImagesFolder.Text := '';
   mJuegos.Clear;
 end;
 
@@ -75,12 +78,14 @@ begin
   end;
 
   eMAMEExe.Text := Config.MAMEExe;
+  eImagesFolder.Text := Config.ImagesFolder;
   mJuegos.Lines.Assign(Config.Juegos);
 end;
 
 procedure TfmLNSCFEConfig.DoSaveFrameData;
 begin
   Config.MAMEExe := eMAMEExe.Text;
+  Config.ImagesFolder := eImagesFolder.Text;
   Config.Juegos.Assign(mJuegos.Lines);
 end;
 
