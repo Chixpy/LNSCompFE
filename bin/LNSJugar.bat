@@ -34,15 +34,15 @@
 ::     principales y a§adir un mÇtodo para crearlo desde el propio Batch.
 ::   * Poder grabar con un estado inicial de la NVRAM, dicho de otro modo:
 ::     1. Guardar el estado actual.
-::     2. Restaurar el estado inicial para grabar.
+::     2. Restaurar el estado inicial para grabar. ™™
 ::        (®D¢nde deber°a estar guardado previamente?)
 ::     3. Ejecutar MAME.
 ::     4. Restaurar el estado actual. 
 ::        (o preguntar si se quiere mantener la NVRAM generada...)
 ::     5. Hacer una copia del estado inicial si la partida se conserva.
 ::        (®D¢nde lo guardo, junto al inp?)
-::     Esto implica que en CrearAVI o ReproducirINP en el paso 2
-::       hay que restaurar el estado inicial correspondiente a cada partida.
+::     ™™ Esto implica que en CrearAVI o ReproducirINP en el paso 2
+::          hay que restaurar el estado inicial correspondiente a cada partida.
 ::   * Poder definir un MAME que est† en otro directorio distinto al Batch...
 ::     (êsto realmente no tengo ning£n interÇs por hacerlo)
 ::     
@@ -55,7 +55,7 @@ GOTO BatchMain
 ::   el fichero.
 
 :: Preguntamos el nombre del jugador
-SET /p $LNSJugador=Escribe tus iniciales o nombre: 
+SET /p $LNSJugador=Escribe tu usuario de LNS: 
 :: Para que no estÇ preguntando:
 ::SET $LNSJugador=CHX
 
@@ -124,10 +124,16 @@ ECHO                                  ^|
 ECHO     [P] - Practicar              ^|     [3] - %$LNSJuego3%
 ECHO                                  ^|
 ECHO  -----------------------------------------------------------------------------
-ECHO     [0]  - Salir                       [A] - Ayuda
+ECHO     [0]  - Salir             [A] - Ayuda                [C] - Configuraci¢n
 ECHO  -----------------------------------------------------------------------------
 
-CHOICE /c:123ERVP0OA > NUL
+CHOICE /c:123ERVP0OAC > NUL
+
+IF ERRORLEVEL 10 (
+  CALL :LNSConfig
+  GOTO BatchRunEnd
+)
+
 IF ERRORLEVEL 10 (
   CALL :LNSAyuda
   GOTO BatchRunEnd
@@ -169,39 +175,13 @@ IF ERRORLEVEL 1 (
 :BatchRunEnd
 GOTO BatchRun
 
-:: AYUDA ======================================================================
-:LNSAyuda
-CLS
-ECHO Hola, %$LNSJugador%.
-ECHO.
-ECHO Veo que has encontrado la ayuda as° que no te voy a explicar para que sirve
-ECHO   la opci¢n [A].
-ECHO.
-ECHO Para elegir un juego pulsa [1], [2] o [3] y se te mostrar† en el men£ el juego
-ECHO   elegido.
-ECHO.
-ECHO Una vez has seleccionado el juego puedes realizar las siguientes acciones:
-ECHO   [E] - Ejecuta el juego y graba un INP para la competici¢n, tras salir del
-ECHO         WolfMAME se te har†n una serie de preguntas para mantener el INP y 
-ECHO         la puntuaci¢n por si quieres mantener un registro de los intentos y
-ECHO         la evoluci¢n.
-ECHO   [R] - Permite reproducir un INP ya guardado.
-ECHO   [V] - Reproduce un INP y adem†s crea un v°deo en la carpeta SNAP
-ECHO   [P] - Ejecuta el juego, sin crear el INP ni las limitaciones de WolfMAME de
-ECHO         cuando se graba (como pausar, usar trucos, savestates, etc).
-ECHO   [0] - Salir. (Vale tanto el cero como la letra O)		
-ECHO.
-PAUSE
-
-GOTO :EOF
-
 :: SUBRUTINAS =================================================================
 
 :: SUB BorrarNVRAM ------------------------------------------------------------
 :BorrarNVRAM
 :: Necesita:
 :: * $1 = Nombre de la ROM de la que hay que borrar la NVRAM.
-:: Borra el directorio nvram\$1\nul.
+:: Borra haciendo una copia de seguridad el directorio nvram\$1 y similares.
 SETLOCAL
 SET $Fichero=%~1
 
@@ -215,6 +195,38 @@ IF NOT DEFINED $Fichero (
 
 :: No borramos cfg porque guarda la configuraci¢n de los botones...
 ::   ... pero ah° se guarda la configuraci¢n de los DIP Switches
+:: IF EXIST "cfg\%$Fichero%.cfg" MOVE /Y "cfg\%$Fichero%.cfg" "cfg\%$Fichero%.cfg.bak"
+IF EXIST "hi\%$Fichero%.hi" MOVE /Y "hi\%$Fichero%.hi" "hi\%$$Fichero%.hi.bak"
+IF EXIST "hi\%$Fichero%" MOVE /Y "hi\%$Fichero%" "hi\%$Fichero%.bak"
+IF EXIST "nvram\%$Fichero%.nv" MOVE /Y "nvram\%$Fichero%.nv" "nvram\%$Fichero%.nv.bak"
+IF EXIST "nvram\%$Fichero%" MOVE /Y "nvram\%$Fichero%" "nvram\%$Fichero%.bak"
+IF EXIST "diff\%$Fichero%.dif" MOVE /Y "diff\%$Fichero%.dif" "diff\%$Fichero%.dif.bak"
+IF EXIST "diff\%$Fichero%" MOVE /Y "diff\%$Fichero%" "diff\%$Fichero%.bak"
+
+:BorrarNVRAMEnd
+ENDLOCAL
+
+GOTO :EOF
+
+:: SUB RestaurarNVRAM ------------------------------------------------------------
+:RestaurarNVRAM
+:: Necesita:
+:: * $1 = Nombre de la ROM de la que hay que restaurar la NVRAM.
+:: Restaura la NVRAM anterior a la grabaci¢n nvram\$1 y similares.
+SETLOCAL
+SET $Fichero=%~1
+
+ECHO RESTAURANDO NVRAM... %$Fichero%
+ECHO -----------------
+IF NOT DEFINED $Fichero (
+  ECHO ERROR - RestaurarNVRAM: No se ha definido nombre del fichero.
+  PAUSE
+  GOTO RestaurarNVRAMEnd
+)
+
+:: Aunque MOVE sobreescribe los ficheros si ya existen, los borramos primero
+::   por si no exist°an originalmente y ha sido creado nuevo durante la
+::   ejecuci¢n de MAME.
 :: IF EXIST "cfg\%$Fichero%.cfg" DEL "cfg\%$Fichero%.cfg"
 IF EXIST "hi\%$Fichero%.hi" DEL "hi\%$$Fichero%.hi"
 IF EXIST "hi\%$Fichero%" RD /s /q "hi\%$Fichero%"
@@ -223,7 +235,15 @@ IF EXIST "nvram\%$Fichero%" RD /s /q "nvram\%$Fichero%"
 IF EXIST "diff\%$Fichero%.dif" DEL "diff\%$Fichero%.dif"
 IF EXIST "diff\%$Fichero%" RD /s /q "diff\%$Fichero%"
 
-:BorrarNVRAMEnd
+:: IF EXIST "cfg\%$Fichero%.cfg.bak" MOVE /Y "cfg\%$Fichero%.cfg.bak" "cfg\%$Fichero%.cfg"
+IF EXIST "hi\%$Fichero%.hi.bak" MOVE /Y "hi\%$Fichero%.hi.bak" "hi\%$$Fichero%.hi"
+IF EXIST "hi\%$Fichero%.bak" MOVE /Y "hi\%$Fichero%.bak" "hi\%$Fichero%"
+IF EXIST "nvram\%$Fichero%.nv.bak" MOVE /Y "nvram\%$Fichero%.nv.bak" "nvram\%$Fichero%.nv"
+IF EXIST "nvram\%$Fichero%.bak" MOVE /Y "nvram\%$Fichero%.bak" "nvram\%$Fichero%"
+IF EXIST "diff\%$Fichero%.dif.bak" MOVE /Y "diff\%$Fichero%.dif.bak" "diff\%$Fichero%.dif"
+IF EXIST "diff\%$Fichero%.bak" MOVE /Y "diff\%$Fichero%.bak" "diff\%$Fichero%"
+
+:RestaurarNVRAMEnd
 ENDLOCAL
 
 GOTO :EOF
@@ -273,6 +293,43 @@ ENDLOCAL & SET $SubSFFichero=%$SubSFFichero%
 
 GOTO :EOF
 
+:: AYUDA ======================================================================
+:LNSAyuda
+CLS
+ECHO Hola, %$LNSJugador%.
+ECHO.
+ECHO Veo que has encontrado la ayuda as° que no te voy a explicar para que sirve
+ECHO   la opci¢n [A].
+ECHO.
+ECHO Para elegir un juego pulsa [1], [2] o [3] y se te mostrar† en el men£ el juego
+ECHO   elegido.
+ECHO.
+ECHO Una vez has seleccionado el juego puedes realizar las siguientes acciones:
+ECHO   [E] - Ejecuta el juego y graba un INP para la competici¢n, tras salir del
+ECHO         WolfMAME se te har†n una serie de preguntas para mantener el INP y 
+ECHO         la puntuaci¢n por si quieres mantener un registro de los intentos y
+ECHO         la evoluci¢n.
+ECHO   [R] - Permite reproducir un INP ya guardado.
+ECHO   [V] - Reproduce un INP y adem†s crea un v°deo en la carpeta SNAP
+ECHO   [P] - Ejecuta el juego, sin crear el INP ni las limitaciones de WolfMAME de
+ECHO         cuando se graba (como pausar, usar trucos, savestates, etc).
+ECHO   [C] - Cambiar la configuraci¢n del programa.		
+ECHO   [0] - Salir. (Vale tanto el cero como la letra O)		
+ECHO.
+PAUSE
+
+GOTO :EOF
+
+:: CONFIGURACI‡N ==============================================================
+:LNSConfig
+CLS
+ECHO TODO: Por implementar...
+ECHO.
+PAUSE
+
+:LNSConfigEnd
+GOTO :EOF
+
 :: CREAR INP ==================================================================
 :LNSCrearINP
 :: Necesita:
@@ -303,13 +360,13 @@ ECHO -------------
 SET $LNSFecha1=%date%
 SET $LNSTiempo1=%time:~0,8%
 
-"%LNSEjecutable%" %$LNSFichAct% -input_directory inp -afs -throttle -speed 1 -rec %$LNSFichAct%.inp
+"%$LNSEjecutable%" %$LNSFichAct% -input_directory inp -afs -throttle -speed 1 -rec %$LNSFichAct%.inp
 
 SET $LNSTiempo2=%time:~0,8%
 SET $LNSFecha2=%date%
 
 ECHO.
-CALL :BorrarNVRAM "%$LNSFichAct%"
+CALL :RestaurarNVRAM "%$LNSFichAct%"
 
 
 :: HACK: Si los n£meros comienzan por 0 el CMD supone que se trata de un n£mero
@@ -450,10 +507,10 @@ SET $SubSFFichero=%$SubSFFichero:~4%
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-"%LNSEjecutable%" %$LNSFichAct% -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
+"%$LNSEjecutable%" %$LNSFichAct% -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
 PAUSE
 
-CALL :BorrarNVRAM "%$LNSFichAct%"
+CALL :RestaurarNVRAM "%$LNSFichAct%"
 
 :LNSReprINPEnd
 ENDLOCAL
@@ -499,10 +556,10 @@ SET $SubSFFichero=%$SubSFFichero:~4,-4%
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-"%LNSEjecutable%" %$LNSFichAct% -noafs -fs 0 -nothrottle -pb "%$SubSFFichero%.inp" -exit_after_playback -aviwrite "%$SubSFFichero%.avi"
+"%$LNSEjecutable%" %$LNSFichAct% -noafs -fs 0 -nothrottle -pb "%$SubSFFichero%.inp" -exit_after_playback -aviwrite "%$SubSFFichero%.avi"
 PAUSE
 
-CALL :BorrarNVRAM "%$LNSFichAct%"
+CALL :RestaurarNVRAM "%$LNSFichAct%"
 
 :LNSCrearAVIEnd
 ENDLOCAL
@@ -533,7 +590,7 @@ IF NOT DEFINED $LNSFichAct (
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-"%LNSEjecutable%" %$LNSFichAct% 
+"%$LNSEjecutable%" %$LNSFichAct% 
 PAUSE
 
 :LNSPracticarEnd
