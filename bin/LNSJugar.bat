@@ -41,6 +41,8 @@
 ::        (¨D¢nde lo guardo, junto al inp?)
 ::     ªª Esto implica que en CrearAVI o ReproducirINP en el paso 2
 ::          hay que restaurar el estado inicial correspondiente a cada partida.
+::        Como recordatorio, si se implementa esto habr  que quitar el par metro
+::          -nvram_dir nul de las llamadas al ejecutable.
 ::   * Poder definir un MAME que est  en otro directorio distinto al Batch...
 ::     (Esto realmente no tengo casi nada de inter‚s por hacerlo)
 ::     
