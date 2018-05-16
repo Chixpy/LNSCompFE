@@ -1,3 +1,6 @@
 [submodule "CHXPas"]
 	path = CHXPas
 	url = ../CHXPas.git
+[submodule "LNSCompFE.wiki"]
+	path = LNSCompFE.wiki
+	url = ../LNSCompFE.wiki.git
