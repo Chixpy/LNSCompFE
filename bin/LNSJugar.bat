@@ -26,12 +26,10 @@
 ::   HI y CFG en sus ubicaciones por defecto.
 ::
 :: TODO: Cosas por hacer... 
-::   * Cambiar la p†gina de c¢digos de la consola y este archivo a UTF8;
-::     (chcp 65001) No afecta para nada m†s que los acentos en los mensajes,
+::   * Cambiar la p†gina de c¢digos de la consola (chcp 65001) y este archivo
+::      a UTF8. No afecta para nada m†s que los acentos en los mensajes,
 ::      pero ser°a elegante y funcionar°an independientemente del lenguaje
 ::      por defecto de Windows
-::   * Usar un fichero auxiliar de config donde se definan las variables
-::     principales y a§adir un mÇtodo para crearlo desde el propio Batch.
 ::   * Poder grabar con un estado inicial de la NVRAM, dicho de otro modo:
 ::     1. Guardar el estado actual.
 ::     2. Restaurar el estado inicial para grabar. ™™
@@ -44,31 +42,35 @@
 ::     ™™ Esto implica que en CrearAVI o ReproducirINP en el paso 2
 ::          hay que restaurar el estado inicial correspondiente a cada partida.
 ::   * Poder definir un MAME que est† en otro directorio distinto al Batch...
-::     (êsto realmente no tengo ning£n interÇs por hacerlo)
+::     (Esto realmente no tengo casi nada de interÇs por hacerlo)
 ::     
 
 GOTO BatchMain
 
 :: VARIABLES PRINCIPALES ======================================================
 :BatchInit
-:: Aqu° van las variables iniciales para no tener que estar buscando en
-::   el fichero.
+:: Aqu° ir°an las variables principales para no estar buscando en todo el 
+::   fichero... pero como ahora se van a guardar en un fichero externo esto
+::   es usado para definir alg£n valor por defecto inicial y cargar la
+::   configuraci¢n.
 
-:: Preguntamos el nombre del jugador
-SET /p $LNSJugador=Escribe tu usuario de LNS: 
-:: Para que no estÇ preguntando:
-::SET $LNSJugador=CHX
+:: Archivo de configuraci¢n
+SET $LNSConfig=LNSJugar.ini
 
-SET $LNSFichero1=fichero1
-SET $LNSJuego1=Juego1
-SET $LNSFichero2=fichero2
-SET $LNSJuego2=Juego2
-SET $LNSFichero3=fichero3
-SET $LNSJuego3=Juego3
-SET $LNSFechaFin=DD/MM/AA
-
+:: Valores por defecto, aunque luego se cambien.
 SET $LNSEjecutable=mamearcade.exe
+SET $LNSFechaFin=%date%
 
+IF EXIST "%$LNSConfig%" (
+  echo on
+  FOR /F "delims=" %%A IN (%$LNSConfig%) DO SET "%%A"
+  echo off
+  pause
+) ELSE (
+  CALL :LNSConfig
+)
+
+:BatchInitEnd
 GOTO :EOF
 
 :: COMPROBACIONES INICIALES ===================================================
@@ -129,11 +131,10 @@ ECHO  --------------------------------------------------------------------------
 
 CHOICE /c:123ERVP0OAC > NUL
 
-IF ERRORLEVEL 10 (
+IF ERRORLEVEL 11 (
   CALL :LNSConfig
   GOTO BatchRunEnd
 )
-
 IF ERRORLEVEL 10 (
   CALL :LNSAyuda
   GOTO BatchRunEnd
@@ -322,12 +323,101 @@ GOTO :EOF
 
 :: CONFIGURACI‡N ==============================================================
 :LNSConfig
+
+:: Variable usada como intermediaria para introducir los valores
+SET $LNSConfInput=
 CLS
-ECHO TODO: Por implementar...
+
+ECHO ---------------------
+ECHO CONFIGURANDO LNSJugar
+ECHO ---------------------
 ECHO.
-PAUSE
+ECHO NOTAS:
+ECHO   - Procura no usar s°mbolos especiales de los .bat como: ^| ^< ^> ^& ^" ^^
+ECHO   - Dejar vac°o un campo mantiene su valor anterior. Aunque si
+ECHO     ya estaba anteriormente vac°o se te volver† a repreguntar.
+ECHO.
+ECHO.
+ECHO Introduce tu nombre de usuario en el foro, sirve para identificar al creador
+ECHO   de las partidas cuando se conservan y diferenciarlas si m†s personas usan
+ECHO   el mismo ordenador.
+ECHO.
+:LNSConfigUsuario
+SET /p "$LNSConfInput=USUARIO (%$LNSJugador%): " || Set $LNSConfInput=%$LNSJugador%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigUsuario 
+SET $LNSJugador=%$LNSConfInput%
+ECHO.
+ECHO.
+ECHO.
+ECHO Ahora configuraremos los 3 juegos y usan 2 valores:
+ECHO   CLAVE: Es el nombre clave del juego usado por MAME del juego. 
+ECHO     Dicho de otro modo, el nombre del fichero .zip (sin la extensi¢n).
+ECHO     Por ejemplo, para "Street Figther II" la clave es "sf2"
+ECHO   NOMBRE: Nombre completo del juego que se mostrar† en el men£ y otros lugares.
+ECHO     (Recuerda no usar ^| ^< ^> ^& ^" ^^)
+ECHO.
+:LNSConfigJuegoFichero1
+SET /p "$LNSConfInput=CLAVE DEL JUEGO 1 (%$LNSFichero1%): " || Set $LNSConfInput=%$LNSFichero1%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigJuegoFichero1 
+SET $LNSFichero1=%$LNSConfInput%
+:LNSConfigJuegoNombre1
+SET /p "$LNSConfInput=NOMBRE DEL JUEGO 1 (%$LNSJuego1%): " || Set $LNSConfInput=%$LNSJuego1%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigJuegoNombre1 
+SET $LNSJuego1=%$LNSConfInput%
+ECHO.
+:LNSConfigJuegoFichero2
+SET /p "$LNSConfInput=CLAVE DEL JUEGO 2 (%$LNSFichero2%): " || Set $LNSConfInput=%$LNSFichero2%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigJuegoFichero2 
+SET $LNSFichero2=%$LNSConfInput%
+:LNSConfigJuegoNombre2
+SET /p "$LNSConfInput=NOMBRE DEL JUEGO 2 (%$LNSJuego2%): " || Set $LNSConfInput=%$LNSJuego2%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigJuegoNombre2 
+SET $LNSJuego2=%$LNSConfInput%
+ECHO.
+:LNSConfigJuegoFichero3
+SET /p "$LNSConfInput=CLAVE DEL JUEGO 3 (%$LNSFichero3%): " || Set $LNSConfInput=%$LNSFichero3%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigJuegoFichero3 
+SET $LNSFichero3=%$LNSConfInput%
+:LNSConfigJuegoNombre3
+SET /p "$LNSConfInput=NOMBRE DEL JUEGO 3 (%$LNSJuego3%): " || Set $LNSConfInput=%$LNSJuego3%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigJuegoNombre3 
+SET $LNSJuego3=%$LNSConfInput%
+ECHO.
+ECHO.
+ECHO.
+ECHO Fecha final del campeonato, tan solo es un recordatorio sin m†s.
+ECHO.
+SET /p "$LNSConfInput=FIN DEL CAMPEONATO (%$LNSFechaFin%): " || Set $LNSConfInput=%$LNSFechaFin%
+SET $LNSFechaFin=%$LNSConfInput%
+ECHO.
+ECHO.
+ECHO.
+ECHO Ejecutable de (Wolf)MAME a usar. Recuerda que debe encontrarse en el mismo
+ECHO   directorio que este archivo Batch
+ECHO.
+:LNSConfigEjecutable
+SET /p "$LNSConfInput=EJECUTABLE (Wolf)MAME (%$LNSEjecutable%): " || Set $LNSConfInput=%$LNSEjecutable%
+IF NOT DEFINED $LNSConfInput GOTO :LNSConfigEjecutable 
+SET $LNSEjecutable=%$LNSConfInput%
 
 :LNSConfigEnd
+:: Limpiando la variable usada como intermediaria para introducir los valores
+SET $LNSConfInput=
+
+:: Guardando la configuraci¢n en el archivo
+:: SET $LNS> "%$LNSConfig%" es mas sencillo pero hay que renombrar las
+::   variables que no se quieran guardar en el fichero (o al reves)
+
+ECHO $LNSJugador=%$LNSJugador%> "%$LNSConfig%"
+ECHO $LNSFichero1=%$LNSFichero1%>> "%$LNSConfig%"
+ECHO $LNSJuego1=%$LNSJuego1%>> "%$LNSConfig%"
+ECHO $LNSFichero2=%$LNSFichero2%>> "%$LNSConfig%"
+ECHO $LNSJuego2=%$LNSJuego2%>> "%$LNSConfig%"
+ECHO $LNSFichero3=%$LNSFichero3%>> "%$LNSConfig%"
+ECHO $LNSJuego3=%$LNSJuego3%>> "%$LNSConfig%"
+ECHO $LNSFechaFin=%$LNSFechaFin%>> "%$LNSConfig%"
+ECHO $LNSEjecutable=%$LNSEjecutable%>> "%$LNSConfig%"
+
 GOTO :EOF
 
 :: CREAR INP ==================================================================
@@ -422,9 +512,9 @@ SET $LNSPuntos=
 SET /p $LNSPuntos="Puntuaci¢n: "
 
 :: Creamos el fichero de estad°sticas si no existe
-IF NOT EXIST "%$LNSFichAct%.csv" ECHO "Inicio","Segundos","Puntos" > "%$LNSFichAct%.csv"
+IF NOT EXIST "%$LNSFichAct%.csv" ECHO "Inicio","Segundos","Puntos"> "%$LNSFichAct%.csv"
 :: A§adimos la l°nea a la tabla
-ECHO %$LNSFecha1% %$LNSTiempo1%,%$LNSDiff%,%$LNSPuntos% >> "%$LNSFichAct%.csv"
+ECHO %$LNSFecha1% %$LNSTiempo1%,%$LNSDiff%,%$LNSPuntos%>> "%$LNSFichAct%.csv"
 
 ECHO.
 ECHO GUARDANDO PARTIDA... inp\%$LNSFichAct%.inp
