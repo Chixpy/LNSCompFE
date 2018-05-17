@@ -197,4 +197,34 @@ begin
 
 end;
 
+procedure TfrmLNSCompFE.NVRAMBackup;
+begin
+
+end;
+
+procedure TfrmLNSCompFE.CrearINP;
+begin
+
+end;
+
+procedure TfrmLNSCompFE.ReproducirINP;
+begin
+
+end;
+
+procedure TfrmLNSCompFE.CrearAVI;
+begin
+
+end;
+
+procedure TfrmLNSCompFE.ProbarJuego;
+begin
+
+end;
+
+procedure TfrmLNSCompFE.NVRAMRestore;
+begin
+
+end;
+
 end.
