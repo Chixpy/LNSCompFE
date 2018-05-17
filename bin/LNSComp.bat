@@ -64,10 +64,7 @@ SET $LNSEjecutable=mamearcade.exe
 SET $LNSFechaFin=%date%
 
 IF EXIST "%$LNSConfig%" (
-  echo on
   FOR /F "delims=" %%A IN (%$LNSConfig%) DO SET "%%A"
-  echo off
-  pause
 ) ELSE (
   CALL :LNSConfig
 )
@@ -110,7 +107,7 @@ IF NOT DEFINED $LNSFichAct (
 )
 CLS
 echo.
-ECHO  %date%                Fin del campeonato: %$LNSFechaFin:~0,8%%               %time:~0,8%
+ECHO  %date% %time:~0,8% - Fin del campeonato: %$LNSFechaFin%             
 ECHO  -----------------------------------------------------------------------------
 ECHO                         CAMPEONATO DE LAS NOCHES SKYPERAS
 ECHO  -----------------------------------------------------------------------------
