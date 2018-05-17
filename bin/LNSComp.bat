@@ -57,7 +57,7 @@ GOTO BatchMain
 ::   configuraci¢n.
 
 :: Archivo de configuraci¢n
-SET $LNSConfig=LNSJugar.ini
+SET $LNSConfig=LNSComp.ini
 
 :: Valores por defecto, aunque luego se cambien.
 SET $LNSEjecutable=mamearcade.exe
@@ -110,7 +110,7 @@ IF NOT DEFINED $LNSFichAct (
 )
 CLS
 echo.
-ECHO  %date%                Fin del campeonato: %$LNSFechaFin%               %time:~0,8%
+ECHO  %date%                Fin del campeonato: %$LNSFechaFin:~0,8%%               %time:~0,8%
 ECHO  -----------------------------------------------------------------------------
 ECHO                         CAMPEONATO DE LAS NOCHES SKYPERAS
 ECHO  -----------------------------------------------------------------------------
@@ -330,9 +330,9 @@ GOTO :EOF
 SET $LNSConfInput=
 CLS
 
-ECHO ---------------------
-ECHO CONFIGURANDO LNSJugar
-ECHO ---------------------
+ECHO --------------------
+ECHO CONFIGURANDO LNSComp
+ECHO --------------------
 ECHO.
 ECHO NOTAS:
 ECHO   - Procura no usar s¡mbolos especiales de los .bat como: ^| ^< ^> ^& ^" ^^
