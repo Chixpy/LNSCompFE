@@ -596,7 +596,7 @@ SET $SubSFFichero=%$SubSFFichero:~4%
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-"%$LNSEjecutable%" %$LNSFichAct% -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
+"%$LNSEjecutable%" %$LNSFichAct% -input_directory inp -afs -throttle -speed 1 -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
 PAUSE
 
 CALL :RestaurarNVRAM "%$LNSFichAct%"
@@ -645,7 +645,7 @@ SET $SubSFFichero=%$SubSFFichero:~4,-4%
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
 ECHO -------------
-"%$LNSEjecutable%" %$LNSFichAct% -noafs -fs 0 -nothrottle -pb "%$SubSFFichero%.inp" -exit_after_playback -aviwrite "%$SubSFFichero%.avi"
+"%$LNSEjecutable%" %$LNSFichAct% -input_directory inp -noafs -fs 0 -nothrottle -pb "%$SubSFFichero%.inp" -exit_after_playback -aviwrite "%$SubSFFichero%.avi"
 PAUSE
 
 CALL :RestaurarNVRAM "%$LNSFichAct%"

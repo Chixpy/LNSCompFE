@@ -204,7 +204,7 @@ end;
 
 procedure TfrmLNSCompFE.CrearINP;
 var
-  MAMEFolder: string;
+  MAMEFolder, Juego: string;
 begin
   if rgbJuegos.ItemIndex = -1 then
     Exit;
@@ -213,8 +213,14 @@ begin
   if MAMEFolder <> '' then
     chdir(MAMEFolder);
 
+  Juego := Config.Juegos[rgbJuegos.ItemIndex];
+
   NVRAMBackup;
 
+  // "%$LNSEjecutable%" %$LNSFichAct% -input_directory inp
+  //   -afs -throttle -speed 1 -rec %$LNSFichAct%.inp
+  ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
+    ' -speed 1 -rec ' + Juego + '.inp');
 
   NVRAMRestore;
 
@@ -224,7 +230,7 @@ end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
 var
-  MAMEFolder: string;
+  MAMEFolder, Juego, Partida: string;
 begin
   if rgbJuegos.ItemIndex = -1 then
     Exit;
@@ -233,8 +239,16 @@ begin
   if MAMEFolder <> '' then
     chdir(MAMEFolder);
 
+  Juego := Config.Juegos[rgbJuegos.ItemIndex];
+  // Partida no puede contener el directorio
+  Partida :=
+
   NVRAMBackup;
 
+  //"%$LNSEjecutable%" %$LNSFichAct% -input_directory inp -afs -throttle
+  //   -speed 1 -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
+  ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
+    ' -speed 1 -pb "' + Partida + '" -inpview 1 -inplayout standard');
 
   NVRAMRestore;
 
@@ -245,6 +259,7 @@ end;
 procedure TfrmLNSCompFE.CrearAVI;
 var
   MAMEFolder: string;
+  Juego: string;
 begin
   if rgbJuegos.ItemIndex = -1 then
     Exit;
@@ -252,9 +267,18 @@ begin
   MAMEFolder := ExtractFileDir(MAMEExe);
   if MAMEFolder <> '' then
     chdir(MAMEFolder);
+  Juego := Config.Juegos[rgbJuegos.ItemIndex];
+  // Partida no puede contener el directorio y se le quita la extension
+  Partida :=
 
   NVRAMBackup;
 
+  // "%$LNSEjecutable%" %$LNSFichAct% -noafs -fs 0 -nothrottle
+  //   -pb "%$SubSFFichero%.inp" -exit_after_playback
+  //   -aviwrite "%$SubSFFichero%.avi"
+  ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle -pb "' +
+    + Partida + '.inp" -exit_after_playback -aviwrite "' + Partida +
+    '.avi"');
 
   NVRAMRestore;
 
