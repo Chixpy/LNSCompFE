@@ -132,7 +132,7 @@ end;
 
 procedure TfrmLNSCompFE.actProbarJuegoExecute(Sender: TObject);
 begin
-  // Ejecutar MAME sin mas...
+  ProbarJuego;
 end;
 
 procedure TfrmLNSCompFE.FormDestroy(Sender: TObject);
@@ -203,23 +203,80 @@ begin
 end;
 
 procedure TfrmLNSCompFE.CrearINP;
+var
+  MAMEFolder: string;
 begin
+  if rgbJuegos.ItemIndex = -1 then
+    Exit;
 
+  MAMEFolder := ExtractFileDir(MAMEExe);
+  if MAMEFolder <> '' then
+    chdir(MAMEFolder);
+
+  NVRAMBackup;
+
+
+  NVRAMRestore;
+
+    if MAMEFolder <> '' then
+    chdir(ProgramDirectory);
 end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
+var
+  MAMEFolder: string;
 begin
+  if rgbJuegos.ItemIndex = -1 then
+    Exit;
 
+  MAMEFolder := ExtractFileDir(MAMEExe);
+  if MAMEFolder <> '' then
+    chdir(MAMEFolder);
+
+  NVRAMBackup;
+
+
+  NVRAMRestore;
+
+    if MAMEFolder <> '' then
+    chdir(ProgramDirectory);
 end;
 
 procedure TfrmLNSCompFE.CrearAVI;
+var
+  MAMEFolder: string;
 begin
+  if rgbJuegos.ItemIndex = -1 then
+    Exit;
 
+  MAMEFolder := ExtractFileDir(MAMEExe);
+  if MAMEFolder <> '' then
+    chdir(MAMEFolder);
+
+  NVRAMBackup;
+
+
+  NVRAMRestore;
+
+  if MAMEFolder <> '' then
+    chdir(ProgramDirectory);
 end;
 
 procedure TfrmLNSCompFE.ProbarJuego;
+var
+  MAMEFolder: string;
 begin
+  if rgbJuegos.ItemIndex = -1 then
+    Exit;
 
+  MAMEFolder := ExtractFileDir(MAMEExe);
+  if MAMEFolder <> '' then
+    chdir(MAMEFolder);
+
+  ExecuteProcess(MAMEExe, Config.Juegos[rgbJuegos.ItemIndex]);
+
+  if MAMEFolder <> '' then
+    chdir(ProgramDirectory);
 end;
 
 procedure TfrmLNSCompFE.NVRAMRestore;
