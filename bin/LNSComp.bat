@@ -1,4 +1,4 @@
-@ECHO off
+@GOTO BatchMain
 :: Copyright (C) 2017-2018 Chixpy
 :: https://github.com/Chixpy/LNSCompFE
 ::
@@ -18,45 +18,41 @@
 :: ---------------------------------------------------------------------
 ::
 :: Solo probado con Win10, muy posiblemente funcione en WinVista e incluso 
-::   WinXP; pero no me hago responsable de que no funcione o cause alg£n da¤o
-::   o p‚rdida de datos.
+::   WinXP; pero no me hago responsable de que no funcione o cause algÃºn daÃ±o
+::   o pÃ©rdida de datos.
 ::
-:: El programa est  pensado para ejecutarse desde el mismo directorio que
+:: El programa estÃ¡ pensado para ejecutarse desde el mismo directorio que
 ::   el ejecutable de (Wolf)MAME y con los directorios INP, NVRAM, DIFF,
 ::   HI y CFG en sus ubicaciones por defecto.
 ::
 :: TODO: Cosas por hacer... 
-::   * Cambiar la p gina de c¢digos de la consola (chcp 65001) y este archivo
-::      a UTF8. No afecta para nada m s que los acentos en los mensajes,
-::      pero ser¡a elegante y funcionar¡an independientemente del lenguaje
-::      por defecto de Windows
 ::   * Poder grabar con un estado inicial de la NVRAM, dicho de otro modo:
 ::     1. Guardar el estado actual.
-::     2. Restaurar el estado inicial para grabar. ªª
-::        (¨D¢nde deber¡a estar guardado previamente?)
+::     2. Restaurar el estado inicial para grabar. Â¬Â¬
+::        (Â¿DÃ³nde deberÃ­a estar guardado previamente?)
 ::     3. Ejecutar MAME.
 ::     4. Restaurar el estado actual. 
 ::        (o preguntar si se quiere mantener la NVRAM generada...)
 ::     5. Hacer una copia del estado inicial si la partida se conserva.
-::        (¨D¢nde lo guardo, junto al inp?)
-::     ªª Esto implica que en CrearAVI o ReproducirINP en el paso 2
+::        (Â¿DÃ³nde lo guardo, junto al inp?)
+::     Â¬Â¬ Esto implica que en CrearAVI o ReproducirINP en el paso 2
 ::          hay que restaurar el estado inicial correspondiente a cada partida.
-::        Como recordatorio, si se implementa esto habr  que quitar el par metro
+::        Como recordatorio, si se implementa esto habrÃ¡ que quitar el parÃ¡metro
 ::          -nvram_dir nul de las llamadas al ejecutable.
-::   * Poder definir un MAME que est  en otro directorio distinto al Batch...
-::     (Esto realmente no tengo casi nada de inter‚s por hacerlo)
+::   * Poder definir un MAME que estÃ¡ en otro directorio distinto al Batch...
+::     (Esto realmente no tengo casi nada de interÃ©s por hacerlo)
 ::     
 
-GOTO BatchMain
+@GOTO BatchMain
 
 :: VARIABLES PRINCIPALES ======================================================
 :BatchInit
-:: Aqu¡ ir¡an las variables principales para no estar buscando en todo el 
+:: AquÃ­ irÃ­an las variables principales para no estar buscando en todo el 
 ::   fichero... pero como ahora se van a guardar en un fichero externo esto
-::   es usado para definir alg£n valor por defecto inicial y cargar la
-::   configuraci¢n.
+::   es usado para definir algÃºn valor por defecto inicial y cargar la
+::   configuraciÃ³n.
 
-:: Archivo de configuraci¢n
+:: Archivo de configuraciÃ³n
 SET $LNSConfig=LNSComp.ini
 
 :: Valores por defecto, aunque luego se cambien.
@@ -75,8 +71,11 @@ GOTO :EOF
 :: COMPROBACIONES INICIALES ===================================================
 :BatchMain
 
+@ECHO off
+
 :: Comprobando que se pueden usar las CMDEXT
 SETLOCAL EnableExtensions
+chcp 65001
 >NUL ECHO & GOTO CHKCMDEXT
 GOTO BatchErrorNOCMDEXT
 :CHKCMDEXT
@@ -86,8 +85,8 @@ SET "CMDEXTVERSION="
 :: Comprobamos si es la version 1
 IF "%CMDEXTVERSION%"=="" (
   ECHO.
-  ECHO Se ha detectado "Command extensions v1", el programa continuar  de
-  ECHO   todas formas, pero se desconoce si funcionar  correctamente en su
+  ECHO Se ha detectado "Command extensions v1", el programa continuarÃ¡ de
+  ECHO   todas formas, pero se desconoce si funcionarÃ¡ correctamente en su
   ECHO   totalidad.
   ECHO.
   PAUSE
@@ -125,7 +124,7 @@ ECHO                                  ^|
 ECHO     [P] - Practicar              ^|     [3] - %$LNSJuego3%
 ECHO                                  ^|
 ECHO  -----------------------------------------------------------------------------
-ECHO     [0]  - Salir             [A] - Ayuda                [C] - Configuraci¢n
+ECHO     [0]  - Salir             [A] - Ayuda                [C] - ConfiguraciÃ³n
 ECHO  -----------------------------------------------------------------------------
 
 CHOICE /c:123ERVP0OAC > NUL
@@ -193,8 +192,8 @@ IF NOT DEFINED $Fichero (
   GOTO BorrarNVRAMEnd
 )
 
-:: No borramos cfg porque guarda la configuraci¢n de los botones...
-::   ... pero ah¡ se guarda la configuraci¢n de los DIP Switches
+:: No borramos cfg porque guarda la configuraciÃ³n de los botones...
+::   ... pero ahÃ­ se guarda la configuraciÃ³n de los DIP Switches
 :: IF EXIST "cfg\%$Fichero%.cfg" MOVE /Y "cfg\%$Fichero%.cfg" "cfg\%$Fichero%.cfg.bak"
 IF EXIST "hi\%$Fichero%.hi" MOVE /Y "hi\%$Fichero%.hi" "hi\%$$Fichero%.hi.bak"
 IF EXIST "hi\%$Fichero%" MOVE /Y "hi\%$Fichero%" "hi\%$Fichero%.bak"
@@ -212,7 +211,7 @@ GOTO :EOF
 :RestaurarNVRAM
 :: Necesita:
 :: * $1 = Nombre de la ROM de la que hay que restaurar la NVRAM.
-:: Restaura la NVRAM anterior a la grabaci¢n nvram\$1 y similares.
+:: Restaura la NVRAM anterior a la grabaciÃ³n nvram\$1 y similares.
 SETLOCAL
 SET $Fichero=%~1
 
@@ -225,8 +224,8 @@ IF NOT DEFINED $Fichero (
 )
 
 :: Aunque MOVE sobreescribe los ficheros si ya existen, los borramos primero
-::   por si no exist¡an originalmente y ha sido creado nuevo durante la
-::   ejecuci¢n de MAME.
+::   por si no existÃ­an originalmente y ha sido creado nuevo durante la
+::   ejecuciÃ³n de MAME.
 :: IF EXIST "cfg\%$Fichero%.cfg" DEL "cfg\%$Fichero%.cfg"
 IF EXIST "hi\%$Fichero%.hi" DEL "hi\%$$Fichero%.hi"
 IF EXIST "hi\%$Fichero%" RD /s /q "hi\%$Fichero%"
@@ -251,18 +250,18 @@ GOTO :EOF
 :: SUB SelecFichero -----------------------------------------------------------
 :SelecFichero
 :: Necesita:
-:: ú $1 = Directorio y filtro para listar los ficheros
+:: Â· $1 = Directorio y filtro para listar los ficheros
 :: Devuelve:
-:: ú %$SubSFFichero% = Nombre del fichero elegido.
+:: Â· %$SubSFFichero% = Nombre del fichero elegido.
 :: Muestra un listado de archivos y permite elegir uno.
-::   En caso de error %$SubSFFichero% no estar  definida.
+::   En caso de error %$SubSFFichero% no estarÃ¡ definida.
 SETLOCAL EnableDelayedExpansion
 SET $SubSFFichero=
 SET $SubSFFiltro=%~1
 
 :: ERROR no se ha definido el filtro
 IF NOT DEFINED $SubSFFiltro (
-  ECHO ERROR - SelecFichero: No se ha definido el filtro de b£squeda.
+  ECHO ERROR - SelecFichero: No se ha definido el filtro de bÃºsqueda.
   PAUSE
   GOTO SelecFicheroEnd
 )
@@ -275,13 +274,13 @@ FOR %%f IN ("%$SubSFFiltro%") DO (
 )
 
 IF %$FicheroIndex% equ 0 (
-  ECHO No se ha encontrado ning£n archivo.
+  ECHO No se ha encontrado ningÃºn archivo.
   GOTO SelecFicheroEnd
 )
 
 SET /P $INPSelec="Seleccione un fichero: " 
 IF NOT DEFINED $INPFich%$INPSelec% (
-   ECHO ­N£mero inv lido seleccionado! 
+   ECHO Â¡NÃºmero invÃ¡lido seleccionado! 
 :: Pausa controlada por quien lo llame - PAUSE   
    GOTO SelecFicheroEnd
 )
@@ -298,29 +297,29 @@ GOTO :EOF
 CLS
 ECHO Hola, %$LNSJugador%.
 ECHO.
-ECHO Veo que has encontrado la ayuda as¡ que no te voy a explicar para que sirve
-ECHO   la opci¢n [A].
+ECHO Veo que has encontrado la ayuda asÃ­ que no te voy a explicar para que sirve
+ECHO   la opciÃ³n [A].
 ECHO.
-ECHO Para elegir un juego pulsa [1], [2] o [3] y se te mostrar  en el men£ el juego
+ECHO Para elegir un juego pulsa [1], [2] o [3] y se te mostrarÃ¡ en el menÃº el juego
 ECHO   elegido.
 ECHO.
 ECHO Una vez has seleccionado el juego puedes realizar las siguientes acciones:
-ECHO   [E] - Ejecuta el juego y graba un INP para la competici¢n, tras salir del
-ECHO         WolfMAME se te har n una serie de preguntas para mantener el INP y 
-ECHO         la puntuaci¢n por si quieres mantener un registro de los intentos y
-ECHO         la evoluci¢n.
+ECHO   [E] - Ejecuta el juego y graba un INP para la competiciÃ³n, tras salir del
+ECHO         WolfMAME se te harÃ¡n una serie de preguntas para mantener el INP y 
+ECHO         la puntuaciÃ³n por si quieres mantener un registro de los intentos y
+ECHO         la evoluciÃ³n.
 ECHO   [R] - Permite reproducir un INP ya guardado.
-ECHO   [V] - Reproduce un INP y adem s crea un v¡deo en la carpeta SNAP
+ECHO   [V] - Reproduce un INP y ademÃ¡s crea un vÃ­deo en la carpeta SNAP
 ECHO   [P] - Ejecuta el juego, sin crear el INP ni las limitaciones de WolfMAME de
 ECHO         cuando se graba (como pausar, usar trucos, savestates, etc).
-ECHO   [C] - Cambiar la configuraci¢n del programa.		
+ECHO   [C] - Cambiar la configuraciÃ³n del programa.		
 ECHO   [0] - Salir. (Vale tanto el cero como la letra O)		
 ECHO.
 PAUSE
 
 GOTO :EOF
 
-:: CONFIGURACIàN ==============================================================
+:: CONFIGURACIÃ“N ==============================================================
 :LNSConfig
 
 :: Variable usada como intermediaria para introducir los valores
@@ -332,13 +331,13 @@ ECHO CONFIGURANDO LNSComp
 ECHO --------------------
 ECHO.
 ECHO NOTAS:
-ECHO   - Procura no usar s¡mbolos especiales de los .bat como: ^| ^< ^> ^& ^" ^^
-ECHO   - Dejar vac¡o un campo mantiene su valor anterior. Aunque si
-ECHO     ya estaba anteriormente vac¡o se te volver  a repreguntar.
+ECHO   - Procura no usar sÃ­mbolos especiales de los .bat como: ^| ^< ^> ^& ^" ^^
+ECHO   - Dejar vacÃ­o un campo mantiene su valor anterior. Aunque si
+ECHO     ya estaba anteriormente vacÃ­o se te volverÃ¡ a repreguntar.
 ECHO.
 ECHO.
 ECHO Introduce tu nombre de usuario en el foro, sirve para identificar al creador
-ECHO   de las partidas cuando se conservan y diferenciarlas si m s personas usan
+ECHO   de las partidas cuando se conservan y diferenciarlas si mÃ¡s personas usan
 ECHO   el mismo ordenador.
 ECHO.
 :LNSConfigUsuario
@@ -350,9 +349,9 @@ ECHO.
 ECHO.
 ECHO Ahora configuraremos los 3 juegos y usan 2 valores:
 ECHO   CLAVE: Es el nombre clave del juego usado por MAME del juego. 
-ECHO     Dicho de otro modo, el nombre del fichero .zip (sin la extensi¢n).
+ECHO     Dicho de otro modo, el nombre del fichero .zip (sin la extensiÃ³n).
 ECHO     Por ejemplo, para "Street Figther II" la clave es "sf2"
-ECHO   NOMBRE: Nombre completo del juego que se mostrar  en el men£ y otros lugares.
+ECHO   NOMBRE: Nombre completo del juego que se mostrarÃ¡ en el menÃº y otros lugares.
 ECHO     (Recuerda no usar ^| ^< ^> ^& ^" ^^)
 ECHO.
 :LNSConfigJuegoFichero1
@@ -384,7 +383,7 @@ SET $LNSJuego3=%$LNSConfInput%
 ECHO.
 ECHO.
 ECHO.
-ECHO Fecha final del campeonato, tan solo es un recordatorio sin m s.
+ECHO Fecha final del campeonato, tan solo es un recordatorio sin mÃ¡s.
 ECHO.
 SET /p "$LNSConfInput=FIN DEL CAMPEONATO (%$LNSFechaFin%): " || Set $LNSConfInput=%$LNSFechaFin%
 SET $LNSFechaFin=%$LNSConfInput%
@@ -403,7 +402,7 @@ SET $LNSEjecutable=%$LNSConfInput%
 :: Limpiando la variable usada como intermediaria para introducir los valores
 SET $LNSConfInput=
 
-:: Guardando la configuraci¢n en el archivo
+:: Guardando la configuraciÃ³n en el archivo
 :: SET $LNS> "%$LNSConfig%" es mas sencillo pero hay que renombrar las
 ::   variables que no se quieran guardar en el fichero (o al reves)
 
@@ -422,8 +421,8 @@ GOTO :EOF
 :: CREAR INP ==================================================================
 :LNSCrearINP
 :: Necesita:
-:: ú $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensi¢n)
-:: ú $2 = OPCIONAL: Nombre completo del juego
+:: Â· $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensiÃ³n)
+:: Â· $2 = OPCIONAL: Nombre completo del juego
 SETLOCAL
 SET $LNSFichAct=%~1
 SET $LNSJuegAct=%~2
@@ -445,7 +444,7 @@ CALL :BorrarNVRAM "%$LNSFichAct%"
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct%
 ECHO -------------
-:: Adem s tomamos la hora inicial y final para las estad¡sticas
+:: AdemÃ¡s tomamos la hora inicial y final para las estadÃ­sticas
 SET $LNSFecha1=%date%
 SET $LNSTiempo1=%time:~0,8%
 
@@ -458,10 +457,10 @@ ECHO.
 CALL :RestaurarNVRAM "%$LNSFichAct%"
 
 
-:: HACK: Si los n£meros comienzan por 0 el CMD supone que se trata de un n£mero
-::   octal, dando error si ve un 08 o 09 as¡ que lo eliminamos.
+:: HACK: Si los nÃºmeros comienzan por 0 el CMD supone que se trata de un nÃºmero
+::   octal, dando error si ve un 08 o 09 asÃ­ que lo eliminamos.
 ::   Por otra parte, en verdad las horas en vez de un 0 tienen un espacio,
-::   pero no es tan problem tico, as¡ que no lo compruebo.
+::   pero no es tan problemÃ¡tico, asÃ­ que no lo compruebo.
 
 SET $LNSDia1=%$LNSFecha1:~0,2%
 if "%$LNSDia1:~0,1%" == "0" SET $LNSDia1=%$LNSDia1:~1,1%
@@ -481,48 +480,48 @@ if "%$LNSMinuto2:~0,1%" == "0" SET $LNSMinuto2=%$LNSMinuto2:~1,1%
 SET $LNSSeg2=%$LNSTiempo2:~6,2%
 if "%$LNSSeg2:~0,1%" == "0" SET $LNSSeg2=%$LNSSeg2:~1,1%
 
-:: A fin de mes, siempre que la partida empiece dos o m s d¡as antes del
-::   fin del mes y no dure m s de un mes...
+:: A fin de mes, siempre que la partida empiece dos o mÃ¡s dÃ­as antes del
+::   fin del mes y no dure mÃ¡s de un mes...
 IF %$LNSDia1% GTR %$LNSDia2% SET /a $LNSDia2=%$LNSDia2%+%$LNSDia1%
 
-:: Hiperc lculo del tiempo
+:: HipercÃ¡lculo del tiempo
 SET /a $LNSDiff=(%$LNSSeg2% - %$LNSSeg1%) + ((%$LNSMinuto2% - %$LNSMinuto1%) * 60) + ((%$LNSHora2% - %$LNSHora1%) * 3600) + ((%$LNSDia2% - %$LNSDia1%) * 86400)
 
-:: Si se est  jugando menos de 60 segundos no contar el intento,
+:: Si se estÃ¡ jugando menos de 60 segundos no contar el intento,
 ::   por si nos hemos equivocado de juego y tal.
 IF %$LNSDiff% LSS 60 (
   ECHO.
-  ECHO La partida ha durado menos de 60 segundos, no ser  contabilizada.
-  ECHO Aunque seguir  en inp\%$LNSFichAct%.inp hasta que comiences otra.
+  ECHO La partida ha durado menos de 60 segundos, no serÃ¡ contabilizada.
+  ECHO Aunque seguirÃ¡ en inp\%$LNSFichAct%.inp hasta que comiences otra.
   ECHO.
   PAUSE
   GOTO LNSCrearINPEnd
 )
 
 ECHO.
-ECHO ESTADÖSTICAS
+ECHO ESTADÃSTICAS
 ECHO ------------
-ECHO La partida comenz¢ el %$LNSFecha1% a las %$LNSTiempo1%
-ECHO   y dur¢ %$LNSDiff% segundos.
+ECHO La partida comenzÃ³ el %$LNSFecha1% a las %$LNSTiempo1%
+ECHO   y durÃ³ %$LNSDiff% segundos.
 ECHO.
-ECHO Introduce la puntuaci¢n conseguida o el tiempo (frames o segundos), puedes
-ECHO   dejarlo vac¡o si has abortado el intento.
+ECHO Introduce la puntuaciÃ³n conseguida o el tiempo (frames o segundos), puedes
+ECHO   dejarlo vacÃ­o si has abortado el intento.
 SET $LNSPuntos=
-SET /p $LNSPuntos="Puntuaci¢n: "
+SET /p $LNSPuntos="PuntuaciÃ³n: "
 
-:: Creamos el fichero de estad¡sticas si no existe
+:: Creamos el fichero de estadÃ­sticas si no existe
 IF NOT EXIST "%$LNSFichAct%.csv" ECHO "Inicio","Segundos","Puntos"> "%$LNSFichAct%.csv"
-:: A¤adimos la l¡nea a la tabla
+:: AÃ±adimos la lÃ­nea a la tabla
 ECHO %$LNSFecha1% %$LNSTiempo1%,%$LNSDiff%,%$LNSPuntos%>> "%$LNSFichAct%.csv"
 
 ECHO.
 ECHO GUARDANDO PARTIDA... inp\%$LNSFichAct%.inp
 ECHO --------------------
-ECHO La partida seguir  en inp\%$LNSFichAct%.inp hasta que comiences otra al
-ECHO   mismo juego, pero si la conservas se copiar  en otro fichero que no ser  
+ECHO La partida seguirÃ¡ en inp\%$LNSFichAct%.inp hasta que comiences otra al
+ECHO   mismo juego, pero si la conservas se copiarÃ¡ en otro fichero que no serÃ¡ 
 ECHO   reescrito.
 ECHO.
-CHOICE /c:SN  /m "¨Quieres conservar la partida"
+CHOICE /c:SN  /m "Â¿Quieres conservar la partida"
 IF ERRORLEVEL 2 GOTO LNSCrearINPEnd
 IF ERRORLEVEL 1 GOTO LNSCrearINPGrabar
 
@@ -560,8 +559,8 @@ GOTO :EOF
 :: REPRODUCIR INP ==================================================================
 :LNSReprINP
 :: Necesita:
-:: ú $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensi¢n)
-:: ú $2 = OPCIONAL: Nombre completo del juego
+:: Â· $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensiÃ³n)
+:: Â· $2 = OPCIONAL: Nombre completo del juego
 SETLOCAL
 SET $LNSFichAct=%~1
 SET $LNSJuegAct=%~2
@@ -609,8 +608,8 @@ GOTO :EOF
 :: CREAR AVI ==================================================================
 :LNSCrearAVI
 :: Necesita:
-:: ú $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensi¢n)
-:: ú $2 = OPCIONAL: Nombre completo del juego
+:: Â· $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensiÃ³n)
+:: Â· $2 = OPCIONAL: Nombre completo del juego
 SETLOCAL
 SET $LNSFichAct=%~1
 SET $LNSJuegAct=%~2
@@ -658,8 +657,8 @@ GOTO :EOF
 :: PRACTICAR ==================================================================
 :LNSPracticar
 :: Necesita:
-:: ú $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensi¢n)
-:: ú $2 = OPCIONAL: Nombre completo del juego
+:: Â· $1 = Nombre clave del juego en MAME (El nombre del fichero sin extensiÃ³n)
+:: Â· $2 = OPCIONAL: Nombre completo del juego
 SETLOCAL
 SET $LNSFichAct=%~1
 SET $LNSJuegAct=%~2
