@@ -22,6 +22,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
+      <MajorVersionNr Value="1"/>
+      <BuildNr Value="3"/>
+      <StringTable ProductVersion="0.0.0.0"/>
     </VersionInfo>
     <BuildModes Count="2">
       <Item1 Name="Debug" Default="True"/>
@@ -34,11 +37,13 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\CHXPas\Forms;..\CHXPas\Frames;..\CHXPas\Units;..\CHXPas\Misc;..\CHXPas\Abstract"/>
+            <OtherUnitFiles Value="forms;..\CHXPas\Forms;..\CHXPas\Frames;..\CHXPas\Units;..\CHXPas\Misc;..\CHXPas\Abstract;Classes;Frames"/>
             <UnitOutputDirectory Value="..\lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -73,7 +78,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="18">
+    <Units Count="19">
       <Unit0>
         <Filename Value="LNSCompFE.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -166,6 +171,13 @@
         <Filename Value="..\bin\LNSComp.bat"/>
         <IsPartOfProject Value="True"/>
       </Unit17>
+      <Unit18>
+        <Filename Value="..\CHXPas\Forms\ufCHXAbout.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmCHXAbout"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit18>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

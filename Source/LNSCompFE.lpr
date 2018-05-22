@@ -8,9 +8,20 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms,
+  // CHX units
+  uCHXRscStr, uCHXConst,
+  // CHX abstracts
+  uaCHXStorable,
   // CHX forms
-  ufrCHXForm, uCHXRscStr, uCHXConst, ufCHXStrLstPreview, ufCHXImgViewer,
-  uaCHXStorable, ufrLNSCompFE, ucLNSCFEConfig, ufLNSCFEConfig;
+  ufrCHXForm,
+  // CHX frames
+  ufCHXStrLstPreview, ufCHXImgViewer,
+  // LNSCompFE classes
+  ucLNSCFEConfig,
+  // LNSCompFE forms
+  ufrLNSCompFE,
+  // LNSCompFE frames
+  ufLNSCFEConfig;
 
 {$R *.res}
 
