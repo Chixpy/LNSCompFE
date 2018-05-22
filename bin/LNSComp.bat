@@ -1,4 +1,5 @@
 @GOTO BatchMain
+:: LNSComp.bat 1.1.0
 :: Copyright (C) 2017-2018 Chixpy
 :: https://github.com/Chixpy/LNSCompFE
 ::

@@ -2650,4 +2650,9 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       7194000098CC0000617400003C00
     }
   end
+  object OpenDialog: TOpenDialog[9]
+    Options = [ofNoChangeDir, ofFileMustExist, ofEnableSizing, ofViewDetail]
+    left = 304
+    top = 264
+  end
 end

@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, ActnList, IniPropStorage, Buttons, StdCtrls,
-  LazFileUtils,
+  LazFileUtils, StrUtils,
   // Misc units
   uVersionSupport,
   // CHX units
@@ -42,6 +42,7 @@ type
     iLogo: TImage;
     lMAMEExe: TLabel;
     lNick: TLabel;
+    OpenDialog: TOpenDialog;
     pBottom: TPanel;
     pMain: TPanel;
     pNick: TPanel;
@@ -66,6 +67,8 @@ type
     FConfigFile: string;
     FDIFFFolder: string;
     FHIFolder: string;
+    FImageExt: TStringList;
+    FImageList: TStringList;
     FImagesFolder: string;
     FImpPreview: TfmCHXImgListPreview;
     FINPFolder: string;
@@ -83,29 +86,51 @@ type
 
   protected
     property ConfigFile: string read FConfigFile write SetConfigFile;
+    //< Nombre del fichero de configuración de LNSCompFE
 
     property MAMEExe: string read FMAMEExe write SetMAMEExe;
+    //< Ruta del ejecutable MAME
     property ImagesFolder: string read FImagesFolder write SetImagesFolder;
+    //< Carperta de imágenes
     property INPFolder: string read FINPFolder write SetINPFolder;
+    //< Carpeta de INP
     property HIFolder: string read FHIFolder write SetHIFolder;
+    //< Carpeta de Hiscores
     property NVRAMFolder: string read FNVRAMFolder write SetNVRAMFolder;
+    //< Carpeta de NVRAM
     property DIFFFolder: string read FDIFFFolder write SetDIFFFolder;
+    //< Carpeta de DIFF de CHDS
 
     property Config: cLNSCFEConfig read FConfig;
+    //< Configuración de LNSConfig
 
     property Juego: string read FJuego write SetJuego;
+    //< Clave del juego seleccionado
+    property ImageList: TStringList read FImageList;
+    //< Lista de imágenes encontradas
+    property ImageExt: TStringList read FImageExt;
+    //< Formatos de imagen soportados
 
     property ImpPreview: TfmCHXImgListPreview read FImpPreview;
+    //< Frame para previsualización de imágenes
 
     procedure ActualizarConfig;
+    //< Actualiza la configuración
     procedure ActualizarMedia;
+    //< Actualiza la imagen
 
     procedure NVRAMBackup;
+    //< Crea una copia de la NVRAM y demás
     procedure CrearINP;
+    //< Ejecuta MAME y crea un INP
     procedure ReproducirINP;
+    //< Reproduce un INP con MAME
     procedure CrearAVI;
+    //< Reproducie un INP y crea un AVI
     procedure ProbarJuego;
+    //< Ejecuta un juego con MAME sin restricciones
     procedure NVRAMRestore;
+    //< Restaura la NVRAM
 
   public
 
@@ -129,8 +154,10 @@ begin
   // Título de la ventana
   Caption := Format('%0:s: %1:s', [Application.Title, 'Ventana principal']);
 
+  // Leemos la configuración de la ventana
   LoadGUIConfig(ConfigFile);
 
+  // Leemos la configuración del programa
   FConfig := cLNSCFEConfig.Create(Self);
   Config.DefaultFileName := ConfigFile;
   Config.LoadFromFile('');
@@ -139,6 +166,11 @@ begin
   FImpPreview := TfmCHXImgListPreview.Create(self);
   ImpPreview.Align := alClient;
   ImpPreview.Parent := pRight;
+
+  // Lista de imágenes
+  FImageList := TStringList.Create;
+  FImageExt := TStringList.Create;
+  ImageExt.CommaText := AnsiReplaceText(AnsiReplaceText(GraphicFileMask(TGraphic), '*.', ''), ';', ',');
 
   // Debería ir en la ventana de configuración pero la voy a dejar en
   //   la principal
@@ -179,6 +211,9 @@ begin
   Config.Nick := eNick.Text;
   Config.SaveToFile('', False); // No borrar el contenido previo del archivo
   Config.Free;
+
+  ImageList.Free;
+  ImageExt.Free;
 end;
 
 procedure TfrmLNSCompFE.iLogoClick(Sender: TObject);
@@ -188,7 +223,7 @@ begin
   frmCHXAbout.mAditional.Lines.Add('(C) 2018 Chixpy - GNU-GPL 3.0');
   frmCHXAbout.mAditional.Lines.Add('');
 
-  frmCHXAbout.mAditional.Lines.Add('Imágenes: ' + ImagesFolder);
+  frmCHXAbout.mAditional.Lines.Add('Images: ' + ImagesFolder);
   frmCHXAbout.mAditional.Lines.Add('INP: ' + INPFolder);
   frmCHXAbout.mAditional.Lines.Add('HI: ' + HIFolder);
   frmCHXAbout.mAditional.Lines.Add('NVRAM: ' + NVRAMFolder);
@@ -202,14 +237,20 @@ var
   FontData: TFontData;
   AlturaTexto: integer;
 begin
-  AlturaTexto := abs(rgbJuegos.Font.Height);
+  // Definimos el número de columnas en base a la cantidad de items, tamaño
+  //   del texto y tamaño del RadioGroup.
+
+  AlturaTexto := rgbJuegos.Font.Height;
   // Si 0 entonces buscamos la altura por defecto
   if rgbJuegos.Font.Height = 0 then
   begin
     FontData := GetFontData(rgbJuegos.Font.Handle);
-    AlturaTexto := abs((FontData.Height * 72) div
+    AlturaTexto := ((FontData.Height * 72) div
       rgbJuegos.Font.PixelsPerInch) * 2;
   end;
+
+  // Suele ser negativo por alguna razón...
+  AlturaTexto := abs(AlturaTexto);
 
   rgbJuegos.Columns := (rgbJuegos.Items.Count div
     ((rgbJuegos.ClientHeight div AlturaTexto) + 1)) + 1;
@@ -240,6 +281,7 @@ begin
   FHIFolder := SetAsFolder(aHIFolder);
 end;
 
+
 procedure TfrmLNSCompFE.SetImagesFolder(const aImagesFolder: string);
 begin
   FImagesFolder := SetAsFolder(SetAsAbsoluteFile(aImagesFolder,
@@ -259,6 +301,7 @@ begin
 
   if Juego = '' then
   begin
+    // Desactivamos botones
     actGrabarINP.Enabled := False;
     actReproducirINP.Enabled := False;
     actGrabarAVI.Enabled := False;
@@ -285,13 +328,14 @@ end;
 
 procedure TfrmLNSCompFE.ActualizarConfig;
 
-  function LeeMAMEConfig(aMAMEIni: TStringList; const Key: string):string;
+  function LeeMAMEConfig(aMAMEIni: TStringList; const Key: string): string;
   var
-    i: Integer;
-    aLine: String;
+    i: integer;
+    aLine: string;
   begin
     Result := '';
 
+    // Buscamos Key al principio de cada línea
     i := 0;
     while (Result = '') and (i < aMAMEIni.Count) do
     begin
@@ -310,11 +354,11 @@ begin
   // Limpiamos variables
   Juego := '';
   MAMEExe := '';
-      MAMEFolder := '';
-    INPFolder := '';
-    HIFolder := '';
-    NVRAMFolder := '';
-    DIFFFolder := '';
+  MAMEFolder := '';
+  INPFolder := '';
+  HIFolder := '';
+  NVRAMFolder := '';
+  DIFFFolder := '';
 
 
   // Lista de juegos
@@ -341,10 +385,12 @@ begin
   ImagesFolder := Config.ImagesFolder;
   // Si no existe obtendremos el que tenga MAME por defecto luego al
   //   leer MAME.ini
+  if not DirectoryExistsUTF8(ImagesFolder) then
+    ImagesFolder := '';
 
   if not FileExistsUTF8(MAMEExe) then
   begin
-    // Borrando todo
+    // Borrando el ejecutable
     MAMEExe := '';
     lMAMEExe.Caption := 'No se encontró ningún ejecutable de MAME';
     Exit; // Nada más que hacer...
@@ -357,30 +403,37 @@ begin
 
 
   // Leyendo MAME.ini
-  // No es un archivo INI al uso así que hay que leerlo a lo bestia...
+  // No es un archivo INI al uso así que hay que leerlo como un archivo
+  //   de texto y buscamos a mano...
 
   if FileExistsUTF8(MAMEFolder + 'MAME.ini') then
   begin
     MAMEIni := TStringList.Create;
     try
       MAMEIni.LoadFromFile(MAMEFolder + 'MAME.ini');
-      ImagesFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni, 'snapshot_directory'), MAMEFolder);
-      INPFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni, 'input_directory'), MAMEFolder);
-      NVRAMFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni, 'nvram_directory'), MAMEFolder);
-      DIFFFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni, 'diff_directory'), MAMEFolder);
+      // Si el directorio de imágenes está definido a mano, no sobreescribirlo.
+      if ImagesFolder = '' then
+        ImagesFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
+          'snapshot_directory'), MAMEFolder);
+      INPFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
+        'input_directory'), MAMEFolder);
+      NVRAMFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
+        'nvram_directory'), MAMEFolder);
+      DIFFFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
+        'diff_directory'), MAMEFolder);
     finally
       MAMEIni.Free;
     end;
   end;
 
-    // No se han definido, ponemos la configuración por defecto
-    if ImagesFolder = '' then
-      ImagesFolder := CreateAbsolutePath('snap', MAMEFolder);
-    if INPFolder = '' then
+  // No se han definido, ponemos la configuración por defecto
+  if ImagesFolder = '' then
+    ImagesFolder := CreateAbsolutePath('snap', MAMEFolder);
+  if INPFolder = '' then
     INPFolder := CreateAbsolutePath('inp', MAMEFolder);
-    if NVRAMFolder = '' then
+  if NVRAMFolder = '' then
     NVRAMFolder := CreateAbsolutePath('nvram', MAMEFolder);
-    if DIFFFolder = '' then
+  if DIFFFolder = '' then
     DIFFFolder := CreateAbsolutePath('diff', MAMEFolder);
 
   // La carpeta HI está definida en el código del plugin como constante
@@ -388,8 +441,36 @@ begin
 end;
 
 procedure TfrmLNSCompFE.ActualizarMedia;
+var
+  i: Integer;
+  aFile: string;
 begin
+  ImpPreview.StrList := nil;
+  ImageList.Clear;
 
+  if (Juego = '') or (ImagesFolder = '') then Exit;
+
+  // Buscamos las imágenes del juego
+  // 1.- <DirImages>\<Juego>.mext
+
+    i := 0;
+    while i < ImageExt.Count do
+    begin
+      aFile := ImageExt[i];
+      if (aFile <> '') and (aFile[1] <> ExtensionSeparator) then
+        aFile := ExtensionSeparator + aFile;
+      aFile := ImagesFolder + Juego + aFile;
+      if FileExistsUTF8(aFile) then
+        ImageList.Add(aFile);
+      Inc(i);
+    end;
+
+  // 2.- <DirImages>\<Juego>\*.mext
+
+   FindAllFiles(ImageList, ImagesFolder + SetAsFolder(Juego),
+    FileMaskFromStringList(ImageExt), True);
+
+  ImpPreview.StrList := ImageList;
 end;
 
 procedure TfrmLNSCompFE.NVRAMBackup;
