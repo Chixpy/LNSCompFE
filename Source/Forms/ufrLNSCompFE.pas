@@ -42,7 +42,7 @@ type
     iLogo: TImage;
     lMAMEExe: TLabel;
     lNick: TLabel;
-    OpenDialog: TOpenDialog;
+    OpenINP: TOpenDialog;
     pBottom: TPanel;
     pMain: TPanel;
     pNick: TPanel;
@@ -170,7 +170,8 @@ begin
   // Lista de imágenes
   FImageList := TStringList.Create;
   FImageExt := TStringList.Create;
-  ImageExt.CommaText := AnsiReplaceText(AnsiReplaceText(GraphicFileMask(TGraphic), '*.', ''), ';', ',');
+  ImageExt.CommaText := AnsiReplaceText(
+    AnsiReplaceText(GraphicFileMask(TGraphic), '*.', ''), ';', ',');
 
   // Debería ir en la ventana de configuración pero la voy a dejar en
   //   la principal
@@ -411,7 +412,7 @@ begin
     MAMEIni := TStringList.Create;
     try
       MAMEIni.LoadFromFile(MAMEFolder + 'MAME.ini');
-      // Si el directorio de imágenes está definido a mano, no sobreescribirlo.
+      // Si el directorio de imágenes está definido, no cambiarlo.
       if ImagesFolder = '' then
         ImagesFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
           'snapshot_directory'), MAMEFolder);
@@ -426,7 +427,7 @@ begin
     end;
   end;
 
-  // No se han definido, ponemos la configuración por defecto
+  // No se han definido, ponemos la configuración por defecto de MAME
   if ImagesFolder = '' then
     ImagesFolder := CreateAbsolutePath('snap', MAMEFolder);
   if INPFolder = '' then
@@ -442,32 +443,33 @@ end;
 
 procedure TfrmLNSCompFE.ActualizarMedia;
 var
-  i: Integer;
+  i: integer;
   aFile: string;
 begin
   ImpPreview.StrList := nil;
   ImageList.Clear;
 
-  if (Juego = '') or (ImagesFolder = '') then Exit;
+  if (Juego = '') or (ImagesFolder = '') then
+    Exit;
 
   // Buscamos las imágenes del juego
   // 1.- <DirImages>\<Juego>.mext
 
-    i := 0;
-    while i < ImageExt.Count do
-    begin
-      aFile := ImageExt[i];
-      if (aFile <> '') and (aFile[1] <> ExtensionSeparator) then
-        aFile := ExtensionSeparator + aFile;
-      aFile := ImagesFolder + Juego + aFile;
-      if FileExistsUTF8(aFile) then
-        ImageList.Add(aFile);
-      Inc(i);
-    end;
+  i := 0;
+  while i < ImageExt.Count do
+  begin
+    aFile := ImageExt[i];
+    if (aFile <> '') and (aFile[1] <> ExtensionSeparator) then
+      aFile := ExtensionSeparator + aFile;
+    aFile := ImagesFolder + Juego + aFile;
+    if FileExistsUTF8(aFile) then
+      ImageList.Add(aFile);
+    Inc(i);
+  end;
 
   // 2.- <DirImages>\<Juego>\*.mext
 
-   FindAllFiles(ImageList, ImagesFolder + SetAsFolder(Juego),
+  FindAllFiles(ImageList, ImagesFolder + SetAsFolder(Juego),
     FileMaskFromStringList(ImageExt), True);
 
   ImpPreview.StrList := ImageList;
@@ -531,57 +533,95 @@ procedure TfrmLNSCompFE.ReproducirINP;
 var
   MAMEFolder, CurrFolder, Partida: string;
 begin
-  //if rgbJuegos.ItemIndex = -1 then
-  //  Exit;
+  if Juego = '' then
+    Exit;
 
-  //MAMEFolder := ExtractFileDir(MAMEExe);
-  //if MAMEFolder <> '' then
-  //  chdir(MAMEFolder);
+  OpenINP.InitialDir := INPFolder;
+  OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
+    '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
 
-  //Juego := Config.Juegos[rgbJuegos.ItemIndex];
-  //// Partida no puede contener el directorio
-  //Partida := ;
+  if not OpenINP.Execute then
+    Exit;
+  // El fichero de la partida guardada, no puede contener ningún tipo de
+  //   directorio y debe encontrarse en el definido por MAME.
 
-  //NVRAMBackup;
+  if CompareFilenames(INPFolder,
+    SetAsFolder(ExtractFilePath(OpenINP.FileName))) = 0 then
+  begin
+    Partida := ExtractFileName(OpenINP.FileName);
+  end
+  else
+  begin
+    { TODO: Si el INP no está donde debe copiarlo temporalmente a la carpeta
+         donde la quiere encontrar MAME }
+    ShowMessageFmt('La partida debe estar en el directorio:' +
+      LineEnding + '%0:s', [INPFolder]);
+    Exit;
+  end;
 
-  ////"%$LNSEjecutable%" %$LNSFichAct% -input_directory inp -afs -throttle
-  ////   -speed 1 -pb "%$SubSFFichero%" -inpview 1 -inplayout standard
-  //ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
-  //  ' -speed 1 -pb "' + Partida + '" -inpview 1 -inplayout standard');
+  MAMEFolder := ExtractFileDir(MAMEExe);
+  CurrFolder := GetCurrentDirUTF8;
 
-  //NVRAMRestore;
+  if MAMEFolder <> '' then
+    SetCurrentDirUTF8(MAMEFolder);
 
-  //  if MAMEFolder <> '' then
-  //  chdir(ProgramDirectory);
+  NVRAMBackup;
+
+  ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
+    ' -speed 1 -pb "' + Partida + '" -inpview 1 -inplayout standard');
+
+  NVRAMRestore;
+
+  if MAMEFolder <> '' then
+    SetCurrentDirUTF8(CurrFolder);
 end;
 
 procedure TfrmLNSCompFE.CrearAVI;
 var
   MAMEFolder, CurrFolder, Partida: string;
 begin
-  //if rgbJuegos.ItemIndex = -1 then
-  //  Exit;
+  if Juego = '' then
+    Exit;
 
-  //MAMEFolder := ExtractFileDir(MAMEExe);
-  //if MAMEFolder <> '' then
-  //  chdir(MAMEFolder);
-  //Juego := Config.Juegos[rgbJuegos.ItemIndex];
-  //// Partida no puede contener el directorio y se le quita la extension
-  //Partida := ;
+  OpenINP.InitialDir := INPFolder;
+  OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
+    '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
 
-  //NVRAMBackup;
+  if not OpenINP.Execute then
+    Exit;
+  // El fichero de la partida guardada, no puede contener ningún tipo de
+  //   directorio y debe encontrarse en el definido por MAME.
 
-  //// "%$LNSEjecutable%" %$LNSFichAct% -noafs -fs 0 -nothrottle
-  ////   -pb "%$SubSFFichero%.inp" -exit_after_playback
-  ////   -aviwrite "%$SubSFFichero%.avi"
-  //ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle -pb "' +
-  //  + Partida + '.inp" -exit_after_playback -aviwrite "' + Partida +
-  //  '.avi"');
+  if CompareFilenames(INPFolder,
+    SetAsFolder(ExtractFilePath(OpenINP.FileName))) = 0 then
+  begin
+    Partida := ExtractFileName(OpenINP.FileName);
+  end
+  else
+  begin
+    { TODO: Si el INP no está donde debe copiarlo temporalmente a la carpeta
+         donde la quiere encontrar MAME }
+    ShowMessageFmt('La partida debe estar en el directorio:' +
+      LineEnding + '%0:s', [INPFolder]);
+    Exit;
+  end;
 
-  //NVRAMRestore;
+  MAMEFolder := ExtractFileDir(MAMEExe);
+  CurrFolder := GetCurrentDirUTF8;
 
-  //if MAMEFolder <> '' then
-  //  chdir(ProgramDirectory);
+  if MAMEFolder <> '' then
+    SetCurrentDirUTF8(MAMEFolder);
+
+  NVRAMBackup;
+
+  ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle -pb "' +
+    + Partida + '" -exit_after_playback -aviwrite "' +
+    ChangeFileExt(Partida, '.avi') + '"');
+
+  NVRAMRestore;
+
+  if MAMEFolder <> '' then
+    SetCurrentDirUTF8(CurrFolder);
 end;
 
 procedure TfrmLNSCompFE.ProbarJuego;
