@@ -23,7 +23,7 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="3"/>
+      <BuildNr Value="4"/>
       <StringTable ProductVersion="0.0.0.0"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -78,7 +78,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="22">
       <Unit0>
         <Filename Value="LNSCompFE.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -131,7 +131,9 @@
       <Unit10>
         <Filename Value="..\CHXPas\Frames\ufCHXImgListPreview.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCHXImgListPreview"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\CHXPas\Units\uCHXRscStr.pas"/>
@@ -144,7 +146,9 @@
       <Unit13>
         <Filename Value="..\CHXPas\Frames\ufCHXStrLstPreview.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCHXStrLstPreview"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\CHXPas\Frames\ufCHXImgViewer.pas"/>
@@ -189,6 +193,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="..\CHXPas\Frames\ufCHXListPreview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="fmCHXListPreview"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

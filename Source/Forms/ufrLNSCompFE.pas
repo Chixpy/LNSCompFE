@@ -154,6 +154,10 @@ begin
   // Título de la ventana
   Caption := Format('%0:s: %1:s', [Application.Title, 'Ventana principal']);
 
+  // Frames
+  FImpPreview := TfmCHXImgListPreview.Create(self);
+  ImpPreview.Align := alClient;
+
   // Leemos la configuración de la ventana
   LoadGUIConfig(ConfigFile);
 
@@ -161,11 +165,6 @@ begin
   FConfig := cLNSCFEConfig.Create(Self);
   Config.DefaultFileName := ConfigFile;
   Config.LoadFromFile('');
-
-  // Frames
-  FImpPreview := TfmCHXImgListPreview.Create(self);
-  ImpPreview.Align := alClient;
-  ImpPreview.Parent := pRight;
 
   // Lista de imágenes
   FImageList := TStringList.Create;
@@ -176,6 +175,10 @@ begin
   // Debería ir en la ventana de configuración pero la voy a dejar en
   //   la principal
   eNick.Text := Config.Nick;
+
+  // Asignamos el parent a los frames
+  //   (si se hace al final se evitan redibujados)
+  ImpPreview.Parent := pRight;
 
   ActualizarConfig;
 end;
@@ -595,7 +598,7 @@ end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
 var
-  MAMEFolder, CurrFolder, Partida: string;
+  MAMEFolder, CurrFolder: string;
 begin
   if Juego = '' then
     Exit;
@@ -606,22 +609,6 @@ begin
 
   if not OpenINP.Execute then
     Exit;
-  // El fichero de la partida guardada, no puede contener ningún tipo de
-  //   directorio y debe encontrarse en el definido por MAME.
-
-  if CompareFilenames(INPFolder,
-    SetAsFolder(ExtractFilePath(OpenINP.FileName))) = 0 then
-  begin
-    Partida := ExtractFileName(OpenINP.FileName);
-  end
-  else
-  begin
-    { TODO: Si el INP no está donde debe copiarlo temporalmente a la carpeta
-         donde la quiere encontrar MAME }
-    ShowMessageFmt('La partida debe estar en el directorio:' +
-      LineEnding + '%0:s', [INPFolder]);
-    Exit;
-  end;
 
   MAMEFolder := ExtractFileDir(MAMEExe);
   CurrFolder := GetCurrentDirUTF8;
@@ -631,8 +618,10 @@ begin
 
   NVRAMBackup;
 
+  // El directorio del fichero INP tiene que estar definido por
+  //   -input_directory ya que -pb no acepta rutas
   ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
-    ' -speed 1 -pb "' + Partida + '" -inpview 1 -inplayout standard');
+    ' -speed 1 -input_directory "' + ExtractFileDir(OpenINP.FileName) + '" -pb "' + ExtractFileName(OpenINP.FileName) + '" -inpview 1 -inplayout standard');
 
   NVRAMRestore;
 
@@ -642,7 +631,7 @@ end;
 
 procedure TfrmLNSCompFE.CrearAVI;
 var
-  MAMEFolder, CurrFolder, Partida: string;
+  MAMEFolder, CurrFolder: string;
 begin
   if Juego = '' then
     Exit;
@@ -653,22 +642,6 @@ begin
 
   if not OpenINP.Execute then
     Exit;
-  // El fichero de la partida guardada, no puede contener ningún tipo de
-  //   directorio y debe encontrarse en el definido por MAME.
-
-  if CompareFilenames(INPFolder,
-    SetAsFolder(ExtractFilePath(OpenINP.FileName))) = 0 then
-  begin
-    Partida := ExtractFileName(OpenINP.FileName);
-  end
-  else
-  begin
-    { TODO: Si el INP no está donde debe copiarlo temporalmente a la carpeta
-         donde la quiere encontrar MAME }
-    ShowMessageFmt('La partida debe estar en el directorio:' +
-      LineEnding + '%0:s', [INPFolder]);
-    Exit;
-  end;
 
   MAMEFolder := ExtractFileDir(MAMEExe);
   CurrFolder := GetCurrentDirUTF8;
@@ -678,9 +651,12 @@ begin
 
   NVRAMBackup;
 
-  ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle -pb "' +
-    Partida + '" -exit_after_playback -aviwrite "' +
-    ChangeFileExt(Partida, '.avi') + '"');
+  // El directorio del fichero INP tiene que estar definido por
+  //   -input_directory ya que -pb no acepta rutas
+  ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle' +
+    ' -input_directory "' + ExtractFileDir(OpenINP.FileName) + '" -pb "' +
+    ExtractFileName(OpenINP.FileName) + '" -exit_after_playback -aviwrite "' +
+    ChangeFileExt(ExtractFileName(OpenINP.FileName), '.avi') + '"');
 
   NVRAMRestore;
 

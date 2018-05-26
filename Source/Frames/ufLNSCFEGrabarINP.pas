@@ -7,8 +7,6 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, Buttons, ActnList,
-  // CHX forms
-  ufrCHXForm,
   // CHX frames
   ufCHXPropEditor;
 
@@ -96,7 +94,6 @@ begin
   inherited Create(TheOwner);
 
   OnSaveFrameData := @DoSaveData;
-
 end;
 
 destructor TfmLNSCFEGrabarINP.Destroy;
