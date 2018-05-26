@@ -55,6 +55,8 @@
 
 :: Archivo de configuración
 SET $LNSConfig=LNSComp.ini
+::Carpeta de stadísticas
+SET $LNSStatsFolder=LNSStats
 
 :: Valores por defecto, aunque luego se cambien.
 SET $LNSEjecutable=mamearcade.exe
@@ -511,9 +513,10 @@ SET $LNSPuntos=
 SET /p $LNSPuntos="Puntuación: "
 
 :: Creamos el fichero de estadísticas si no existe
-IF NOT EXIST "%$LNSFichAct%.csv" ECHO "Inicio","Segundos","Puntos"> "%$LNSFichAct%.csv"
+IF NOT EXIST %$LNSStatsFolder% MD %$LNSStatsFolder%
+IF NOT EXIST "%$LNSStatsFolder%\%$LNSFichAct%.csv" ECHO "Inicio","Segundos","Puntos"> "%$LNSStatsFolder%\%$LNSFichAct%.csv"
 :: Añadimos la línea a la tabla
-ECHO %$LNSFecha1% %$LNSTiempo1%,%$LNSDiff%,%$LNSPuntos%>> "%$LNSFichAct%.csv"
+ECHO %$LNSFecha1% %$LNSTiempo1%,%$LNSDiff%,%$LNSPuntos%>> "%$LNSStatsFolder%\%$LNSFichAct%.csv"
 
 ECHO.
 ECHO GUARDANDO PARTIDA... inp\%$LNSFichAct%.inp
