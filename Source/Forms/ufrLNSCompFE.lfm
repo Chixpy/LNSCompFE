@@ -2428,14 +2428,18 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     Top = 131
     Width = 342
     Align = alRight
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.HorizontalSpacing = 4
+    ChildSizing.VerticalSpacing = 4
     ClientHeight = 279
     ClientWidth = 342
     TabOrder = 5
     object lMAMEExe: TLabel
-      Left = 1
+      Left = 5
       Height = 15
-      Top = 1
-      Width = 340
+      Top = 5
+      Width = 332
       Align = alTop
       Caption = 'Ejecutable de MAME'
       ParentColor = False
@@ -2652,7 +2656,6 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   end
   object OpenINP: TOpenDialog[9]
     DefaultExt = '.inp'
-    Filter = 'Ficheros INP|*.inp'
     Options = [ofNoChangeDir, ofFileMustExist, ofEnableSizing, ofViewDetail]
     left = 304
     top = 264

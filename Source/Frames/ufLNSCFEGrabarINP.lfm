@@ -1,0 +1,93 @@
+inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
+  inherited pButtons: TPanel
+    TabOrder = 4
+    inherited bSave: TBitBtn
+      Default = True
+    end
+  end
+  object rgbConservar: TRadioGroup[1]
+    Left = 0
+    Height = 47
+    Top = 124
+    Width = 320
+    Align = alTop
+    AutoFill = True
+    AutoSize = True
+    Caption = 'Conservar partida'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.TopBottomSpacing = 4
+    ChildSizing.HorizontalSpacing = 4
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 27
+    ClientWidth = 316
+    Columns = 2
+    ItemIndex = 0
+    Items.Strings = (
+      'Sí'
+      'No'
+    )
+    TabOrder = 2
+  end
+  object gbxPuntuacion: TGroupBox[2]
+    Left = 0
+    Height = 66
+    Top = 54
+    Width = 320
+    Align = alTop
+    AutoSize = True
+    Caption = 'Puntuación'
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    ClientHeight = 46
+    ClientWidth = 316
+    TabOrder = 1
+    object ePuntuacion: TEdit
+      Left = 4
+      Height = 23
+      Top = 19
+      Width = 308
+      Align = alTop
+      TabOrder = 0
+      TextHint = 'Introduce la puntuación o el tiempo logrado'
+    end
+    object lPuntuacion: TLabel
+      Left = 4
+      Height = 15
+      Top = 4
+      Width = 308
+      Align = alTop
+      Caption = 'Puedes dejarlo vacío si has abortado el intento'
+      ParentColor = False
+    end
+  end
+  object pEstadisticas: TPanel[3]
+    Left = 0
+    Height = 50
+    Top = 0
+    Width = 320
+    Align = alTop
+    ChildSizing.LeftRightSpacing = 4
+    ChildSizing.TopBottomSpacing = 4
+    TabOrder = 0
+    Wordwrap = True
+  end
+  object pInfo: TPanel[4]
+    Left = 0
+    Height = 35
+    Top = 175
+    Width = 320
+    Align = alClient
+    Caption = 'Independientemente de si la conservas o no, la partida seguirá en <clavejuego>.inp hasta que comiences otra.'
+    TabOrder = 3
+    Wordwrap = True
+  end
+  inherited alPropEditor: TActionList[5]
+  end
+  inherited ilPropEditor: TImageList[6]
+  end
+end

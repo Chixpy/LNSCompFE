@@ -21,7 +21,7 @@ uses
   // LNSCompFE forms
   ufrLNSCompFE,
   // LNSCompFE frames
-  ufLNSCFEConfig;
+  ufLNSCFEConfig, ufLNSCFEGrabarINP;
 
 {$R *.res}
 

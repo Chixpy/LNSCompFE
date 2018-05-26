@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, ActnList, IniPropStorage, Buttons, StdCtrls,
-  LazFileUtils, StrUtils,
+  LazFileUtils, StrUtils, dateutils, LazUTF8,
   // Misc units
   uVersionSupport,
   // CHX units
@@ -19,7 +19,7 @@ uses
   // LNSCompFE classes
   ucLNSCFEConfig,
   // LNSCompFE frames
-  ufLNSCFEConfig;
+  ufLNSCFEConfig, ufLNSCFEGrabarINP;
 
 type
 
@@ -224,11 +224,11 @@ begin
   frmCHXAbout.mAditional.Lines.Add('(C) 2018 Chixpy - GNU-GPL 3.0');
   frmCHXAbout.mAditional.Lines.Add('');
 
-  frmCHXAbout.mAditional.Lines.Add('Images: ' + ImagesFolder);
-  frmCHXAbout.mAditional.Lines.Add('INP: ' + INPFolder);
-  frmCHXAbout.mAditional.Lines.Add('HI: ' + HIFolder);
-  frmCHXAbout.mAditional.Lines.Add('NVRAM: ' + NVRAMFolder);
-  frmCHXAbout.mAditional.Lines.Add('DIFF: ' + DIFFFolder);
+  frmCHXAbout.mAditional.Lines.Add(Format('Imágenes: %0:s', [ImagesFolder]));
+  frmCHXAbout.mAditional.Lines.Add(Format('INP: %0:s', [INPFolder]));
+  frmCHXAbout.mAditional.Lines.Add(Format('HI: %0:s', [HIFolder]));
+  frmCHXAbout.mAditional.Lines.Add(Format('NVRAM: %0:s', [NVRAMFolder]));
+  frmCHXAbout.mAditional.Lines.Add(Format('DIFF: %0:s', [DIFFFolder]));
 
   frmCHXAbout.ShowModal;
 end;
@@ -507,7 +507,11 @@ end;
 
 procedure TfrmLNSCompFE.CrearINP;
 var
-  MAMEFolder, CurrFolder: string;
+  MAMEFolder, CurrFolder, aFileName: string;
+  HoraInicio: TDateTime;
+  DatosGrabarINP: RGrabarINPDatos;
+  aCSV: TStringList;
+  i: Integer;
 begin
   if Juego = '' then
     Exit;
@@ -520,10 +524,70 @@ begin
 
   NVRAMBackup;
 
+  HoraInicio := Now;
+
   ExecuteProcess(MAMEExe, Juego + ' -afs -throttle -speed 1 -rec ' +
     Juego + '.inp');
 
+  DatosGrabarINP.Segundos := SecondsBetween(Now, HoraInicio);
+  DatosGrabarINP.Conservar := False;
+
   NVRAMRestore;
+
+  // Grabando datos y demás
+  if DatosGrabarINP.Segundos < 60 then
+  begin
+    ShowMessage(Format(
+      'La partida ha durado menos de 60 segundos, no será contabilizada.' +
+      LineEnding + LineEnding + 'Aunque seguirá en' +
+      LineEnding + '%0:s%1:s.inp' + LineEnding +
+      'hasta que comiences otra.', [INPFolder, Juego]));
+  end
+  else
+  begin
+    TfmLNSCFEGrabarINP.SimpleForm(@DatosGrabarINP, ConfigFile, '');
+
+    aFileName := SetAsFolder(MAMEFolder) + 'LNSStats';
+
+    // Guardando estadísticas
+    if not DirectoryExistsUTF8(aFileName) then
+      ForceDirectoriesUTF8(aFileName);
+
+    aFileName := SetAsFolder(aFileName) + Juego + '.csv';
+    aCSV := TStringList.Create;
+    try
+      if FileExistsUTF8(aFileName) then
+        aCSV.LoadFromFile(aFileName);
+
+      // DateTimeToStr sin format settings, guarda las fechas igual que lo
+      //   hace el DOS ;-D
+      aCSV.Add(DateTimeToStr(HoraInicio) + ',' +
+        IntToStr(DatosGrabarINP.Segundos) + ',' + DatosGrabarINP.Puntuacion);
+      aCSV.SaveToFile(aFileName);
+    finally
+      aCSV.Free;
+    end;
+
+    // Conservando partida
+    if DatosGrabarINP.Conservar then
+    begin
+      aFileName := INPFolder + Juego + ' - ' + eNick.Text +
+        ' - ' + DatosGrabarINP.Puntuacion + '.inp';
+
+      // Comprobamos que no existe anteriormente
+      i := 1;
+      while FileExistsUTF8(aFileName) do
+      begin
+        aFileName := INPFolder + Juego + ' - ' + eNick.Text +
+          ' - ' + DatosGrabarINP.Puntuacion + ' (' + IntToStr(i) + ').inp';
+        Inc(i);
+      end;
+
+      // Por el momentp no exite CopyFileUTF8...
+      CopyFile(UTF8ToSys(INPFolder + Juego + '.inp'), UTF8ToSys(aFileName), True);
+    end;
+  end;
+
 
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);
@@ -615,7 +679,7 @@ begin
   NVRAMBackup;
 
   ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle -pb "' +
-    + Partida + '" -exit_after_playback -aviwrite "' +
+    Partida + '" -exit_after_playback -aviwrite "' +
     ChangeFileExt(Partida, '.avi') + '"');
 
   NVRAMRestore;
