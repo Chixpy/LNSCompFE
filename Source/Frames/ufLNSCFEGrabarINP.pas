@@ -14,7 +14,7 @@ type
 
   // Un simple record para obtener los datos del formulario, hacer una clase
   //   es excesivo...
-  // Aunque usar un record implica rastear con punteros XD
+  // Aunque usar un record implica trastear con punteros XD
 
   RGrabarINPDatos = record
     Segundos: integer;
@@ -32,6 +32,7 @@ type
     pEstadisticas: TPanel;
     pInfo: TPanel;
     rgbConservar: TRadioGroup;
+    procedure ePuntuacionEditingDone(Sender: TObject);
   private
     FDatos: PGrabarINPDatos;
     procedure SetDatos(const aDatos: PGrabarINPDatos);
@@ -55,6 +56,12 @@ implementation
 
 { TfmLNSCFEGrabarINP }
 
+procedure TfmLNSCFEGrabarINP.ePuntuacionEditingDone(Sender: TObject);
+begin
+  // Grabamos la puntuación de todas formas, para las estadísticas
+  Datos^.Puntuacion := ePuntuacion.Text;
+end;
+
 procedure TfmLNSCFEGrabarINP.SetDatos(const aDatos: PGrabarINPDatos);
 begin
   if FDatos = aDatos then
@@ -72,7 +79,7 @@ begin
   if not assigned(Datos) then
     Exit;
 
-  Datos^.Puntuacion := ePuntuacion.Text;
+  // Sólo conservamos la partida si se pulsa aceptar.
   Datos^.Conservar := rgbConservar.ItemIndex = 0;
 end;
 
@@ -82,11 +89,15 @@ var
   aFrame: TfmLNSCFEGrabarINP;
 begin
   aFrame := TfmLNSCFEGrabarINP.Create(nil);
+  try
   aFrame.Datos := aDatos;
   aFrame.ButtonClose := True;
 
-  GenSimpleModalForm(aFrame, 'frmGrabarINP', 'Grabar INP', aGUIConfigIni,
+  GenSimpleModalForm(aFrame, 'frmGrabarINP', 'LNSCompFE: Grabar INP', aGUIConfigIni,
     aGUIIconsIni);
+  finally
+    // aFrame.Free; Autoliberado al cerrar el formulario
+  end;
 end;
 
 constructor TfmLNSCFEGrabarINP.Create(TheOwner: TComponent);

@@ -23,8 +23,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <BuildNr Value="4"/>
-      <StringTable ProductVersion="0.0.0.0"/>
+      <BuildNr Value="6"/>
+      <StringTable Comments="FrontEnd para usar con (Wolf)MAME para grabar INP limpiando NVRAM, DIFF y HI" FileDescription="FrontEnd para las competiciones de Las Noches Skyperas" InternalName="LNSCompFE" LegalCopyright="(C) 2017-2018 Chixpy" OriginalFilename="LNSCompFE.exe" ProductName="LNSCompFE" ProductVersion="0.0.0.0"/>
     </VersionInfo>
     <BuildModes Count="2">
       <Item1 Name="Debug" Default="True"/>
@@ -33,7 +33,7 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\bin\LNSCompFE-$(TargetOS)"/>
+            <Filename Value="..\bin\LNSCompFE"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
@@ -78,7 +78,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="22">
+    <Units Count="23">
       <Unit0>
         <Filename Value="LNSCompFE.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -200,6 +200,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit21>
+      <Unit22>
+        <Filename Value="..\CHXPas\Units\uCHXDlgUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

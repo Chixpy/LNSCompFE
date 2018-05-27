@@ -1,15 +1,12 @@
 ## LNSCompFE ##
-Front-End para las competiciones de Las Noches Skyperas.
+Front-End para las competiciones de [Las Noches Skyperas](http://nochesskyperas.1foro.com).
 
-*POR EL MOMENTO, TAN SOLO ESTÁ IMPLEMENTADA LA VERSIÓN .BAT*
+LNSCompFE es un pequeño Front-End pensado para facilitar un poco los intentos en los campeonatos de [Las Noches Skyperas](http://nochesskyperas.1foro.com). Aunque nada impide configurarse para su uso e interés personal, ya que ofrece facilidades a la hora de grabar INP con (Wolf)MAME.
 
-Aunque este repositorio es para la creación de un FrontEnd con ventanas, el archivo por lotes ofrecen las mismas características esenciales... y en mi opinión, a la larga, es más cómodo de usar.
+Además se incluye un .bat que realiza las misma funciones, en caso de que se prefiera usar dicha versión.
 
-## Está por implementar ##
-
-La idea es implementar la misma funcionalidad de los archivos .BAT en un entorno gráfico más amigable en vez de un menú de MS-DOS. Y tal vez añadir alguna chorraduca adicional como el poder ver los screenshots de los juegos.
-
-LNSCompFE es un pequeño Front-End pensado para facilitar un poco los intentos en los campeonatos de [Las Noches Skyperas](http://nochesskyperas.1foro.com). Aunque nada impide configurarse para su uso e interés personal, ya que ofrece alguna utilidad extra.
+* [Ayuda](https://github.com/Chixpy/LNSCompFE/wiki)
+* [Descargas](https://github.com/Chixpy/LNSCompFE/releases)
 
 Las principales ventajas que ofrece respecto a usar directamente el interfaz de WolfMAME son:
 

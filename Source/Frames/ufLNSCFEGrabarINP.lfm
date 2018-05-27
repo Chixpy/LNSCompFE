@@ -1,15 +1,31 @@
 inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
+  Height = 311
+  Width = 376
+  ClientHeight = 311
+  ClientWidth = 376
+  DesignLeft = 509
+  DesignTop = 160
   inherited pButtons: TPanel
+    Top = 285
+    Width = 376
+    ClientWidth = 376
     TabOrder = 4
+    inherited chkCloseOnSave: TCheckBox
+      Left = 46
+    end
     inherited bSave: TBitBtn
+      Left = 141
       Default = True
+    end
+    inherited bCancel: TBitBtn
+      Left = 249
     end
   end
   object rgbConservar: TRadioGroup[1]
     Left = 0
     Height = 47
     Top = 124
-    Width = 320
+    Width = 376
     Align = alTop
     AutoFill = True
     AutoSize = True
@@ -24,7 +40,7 @@ inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 2
     ClientHeight = 27
-    ClientWidth = 316
+    ClientWidth = 372
     Columns = 2
     ItemIndex = 0
     Items.Strings = (
@@ -37,21 +53,22 @@ inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
     Left = 0
     Height = 66
     Top = 54
-    Width = 320
+    Width = 376
     Align = alTop
     AutoSize = True
     Caption = 'Puntuación'
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
     ClientHeight = 46
-    ClientWidth = 316
+    ClientWidth = 372
     TabOrder = 1
     object ePuntuacion: TEdit
       Left = 4
       Height = 23
       Top = 19
-      Width = 308
+      Width = 364
       Align = alTop
+      OnEditingDone = ePuntuacionEditingDone
       TabOrder = 0
       TextHint = 'Introduce la puntuación o el tiempo logrado'
     end
@@ -59,7 +76,7 @@ inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
       Left = 4
       Height = 15
       Top = 4
-      Width = 308
+      Width = 364
       Align = alTop
       Caption = 'Puedes dejarlo vacío si has abortado el intento'
       ParentColor = False
@@ -69,7 +86,7 @@ inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
     Left = 0
     Height = 50
     Top = 0
-    Width = 320
+    Width = 376
     Align = alTop
     ChildSizing.LeftRightSpacing = 4
     ChildSizing.TopBottomSpacing = 4
@@ -78,9 +95,9 @@ inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
   end
   object pInfo: TPanel[4]
     Left = 0
-    Height = 35
+    Height = 106
     Top = 175
-    Width = 320
+    Width = 376
     Align = alClient
     Caption = 'Independientemente de si la conservas o no, la partida seguirá en <clavejuego>.inp hasta que comiences otra.'
     TabOrder = 3

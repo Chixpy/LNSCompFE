@@ -7,6 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
   StdCtrls, Buttons, ActnList, EditBtn,
+  // CHX units
+  uCHXDlgUtils,
   // CHX frames
   ufCHXPropEditor,
   // LNSCompFE classes
@@ -21,10 +23,14 @@ type
     eMAMEExe: TFileNameEdit;
     gbxJuegos: TGroupBox;
     gbxMAMEConfig: TGroupBox;
+    lAyudaEjecutable: TLabel;
+    lAyudaImagenes: TLabel;
     lImages: TLabel;
     lJuegos: TLabel;
     lMAMEExe: TLabel;
     mJuegos: TMemo;
+    procedure eImagesFolderChange(Sender: TObject);
+    procedure eMAMEExeButtonClick(Sender: TObject);
 
   private
     FConfig: cLNSCFEConfig;
@@ -41,7 +47,6 @@ type
     class function SimpleModalForm(aConfig: cLNSCFEConfig;
       const aConfigIni, aIconsIni: string): integer;
 
-
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
   end;
@@ -51,6 +56,16 @@ implementation
 {$R *.lfm}
 
 { TfmLNSCFEConfig }
+
+procedure TfmLNSCFEConfig.eMAMEExeButtonClick(Sender: TObject);
+begin
+  SetFileEditInitialDir(eMAMEExe, '');
+end;
+
+procedure TfmLNSCFEConfig.eImagesFolderChange(Sender: TObject);
+begin
+  SetDirEditInitialDir(eImagesFolder, '');
+end;
 
 procedure TfmLNSCFEConfig.SetConfig(const aConfig: cLNSCFEConfig);
 begin
@@ -95,12 +110,12 @@ var
   aFrame: TfmLNSCFEConfig;
 begin
   aFrame := TfmLNSCFEConfig.Create(nil);
-  aFrame.Config := aConfig;
-  aFrame.ButtonClose := True;
-
   try
+    aFrame.Config := aConfig;
+    aFrame.ButtonClose := True;
+
     Result := GenSimpleModalForm(aFrame, 'frmLNSCFEConfig',
-      'LNS Comp FE Config', aConfigIni, aIconsIni);
+      'LNSCompFE: Config', aConfigIni, aIconsIni);
   finally
     // aFrame.Free; Autoliberado al cerrar el formulario
   end;

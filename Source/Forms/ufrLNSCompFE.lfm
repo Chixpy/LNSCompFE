@@ -30,7 +30,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     ChildSizing.TopBottomSpacing = 4
     ClientHeight = 279
     ClientWidth = 277
-    TabOrder = 2
+    TabOrder = 1
     object rgbJuegos: TRadioGroup
       Left = 5
       Height = 236
@@ -50,7 +50,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       ColumnLayout = clVerticalThenHorizontal
       OnResize = rgbJuegosResize
       OnSelectionChanged = rgbJuegosSelectionChanged
-      TabOrder = 0
+      TabOrder = 1
     end
     object pNick: TPanel
       Left = 5
@@ -65,7 +65,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       ChildSizing.VerticalSpacing = 4
       ClientHeight = 33
       ClientWidth = 267
-      TabOrder = 1
+      TabOrder = 0
       object lNick: TLabel
         Left = 5
         Height = 23
@@ -98,11 +98,12 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     ChildSizing.TopBottomSpacing = 4
     ClientHeight = 123
     ClientWidth = 632
-    TabOrder = 3
+    TabOrder = 0
     object iLogo: TImage
       Cursor = crHandPoint
       Left = 5
       Height = 113
+      Hint = 'Pulsa para ver información de la versión de LNSCompFE.'
       Top = 5
       Width = 622
       Align = alClient
@@ -2382,7 +2383,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     ClientWidth = 632
     TabOrder = 4
     object bJugar: TBitBtn
-      Left = 7
+      Left = 16
       Height = 26
       Top = 4
       Width = 103
@@ -2390,7 +2391,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       TabOrder = 0
     end
     object bReproducir: TBitBtn
-      Left = 117
+      Left = 135
       Height = 26
       Top = 4
       Width = 126
@@ -2398,7 +2399,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       TabOrder = 1
     end
     object bGrabarAVI: TBitBtn
-      Left = 250
+      Left = 277
       Height = 26
       Top = 4
       Width = 95
@@ -2406,7 +2407,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       TabOrder = 2
     end
     object bProbar: TBitBtn
-      Left = 352
+      Left = 388
       Height = 26
       Top = 4
       Width = 114
@@ -2414,10 +2415,10 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       TabOrder = 3
     end
     object bConfig: TBitBtn
-      Left = 473
+      Left = 518
       Height = 26
       Top = 4
-      Width = 153
+      Width = 103
       Action = actEditarConfig
       TabOrder = 4
     end
@@ -2434,7 +2435,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     ChildSizing.VerticalSpacing = 4
     ClientHeight = 279
     ClientWidth = 342
-    TabOrder = 5
+    TabOrder = 3
     object lMAMEExe: TLabel
       Left = 5
       Height = 15
@@ -2453,7 +2454,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     top = 136
     object actEditarConfig: TAction
       Category = 'Config'
-      Caption = 'Editar configuración'
+      Caption = 'Configurar'
       Hint = 'Abre el formulario para editar la configuración.'
       ImageIndex = 4
       OnExecute = actEditarConfigExecute
@@ -2468,7 +2469,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     object actGrabarAVI: TAction
       Category = 'Acciones'
       Caption = 'Crear AVI'
-      Hint = 'Crea un archivo AVi a partir de una partida guardada.'
+      Hint = 'Crea un archivo AVI a partir de una partida guardada.'
       ImageIndex = 2
       OnExecute = actGrabarAVIExecute
     end

@@ -7,11 +7,11 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
   ComCtrls, ExtCtrls, ActnList, IniPropStorage, Buttons, StdCtrls,
-  LazFileUtils, StrUtils, dateutils, LazUTF8,
+  LazFileUtils, StrUtils, dateutils, LazUTF8, inifiles, process,
   // Misc units
   uVersionSupport,
   // CHX units
-  uCHXStrUtils,
+  uCHXStrUtils, uCHXDlgUtils,
   // CHX forms
   ufrCHXForm, ufCHXAbout,
   // CHX frames
@@ -74,6 +74,7 @@ type
     FINPFolder: string;
     FJuego: string;
     FMAMEExe: string;
+    FNombreJuegos: TStringList;
     FNVRAMFolder: string;
     procedure SetConfigFile(const aConfigFile: string);
     procedure SetDIFFFolder(const aDIFFFolder: string);
@@ -106,6 +107,8 @@ type
 
     property Juego: string read FJuego write SetJuego;
     //< Clave del juego seleccionado
+    property NombreJuegos: TStringList read FNombreJuegos;
+    //< Lista con el nombre completo de los juegos
     property ImageList: TStringList read FImageList;
     //< Lista de imágenes encontradas
     property ImageExt: TStringList read FImageExt;
@@ -114,10 +117,12 @@ type
     property ImpPreview: TfmCHXImgListPreview read FImpPreview;
     //< Frame para previsualización de imágenes
 
+    procedure ActualizarNombreJuegos;
+    //< Actualiza el nombre de los juegos
     procedure ActualizarConfig;
     //< Actualiza la configuración
     procedure ActualizarMedia;
-    //< Actualiza la imagen
+    //< Actualiza la imagen del juego seleccionado
 
     procedure NVRAMBackup;
     //< Crea una copia de la NVRAM y demás
@@ -165,6 +170,9 @@ begin
   FConfig := cLNSCFEConfig.Create(Self);
   Config.DefaultFileName := ConfigFile;
   Config.LoadFromFile('');
+
+  // Creamos lista de Nombres de juegos
+  FNombreJuegos := TStringList.Create;
 
   // Lista de imágenes
   FImageList := TStringList.Create;
@@ -218,6 +226,8 @@ begin
 
   ImageList.Free;
   ImageExt.Free;
+
+  NombreJuegos.Free;
 end;
 
 procedure TfrmLNSCompFE.iLogoClick(Sender: TObject);
@@ -330,6 +340,73 @@ begin
   FNVRAMFolder := SetAsFolder(aNVRAMFolder);
 end;
 
+procedure TfrmLNSCompFE.ActualizarNombreJuegos;
+var
+  i: integer;
+  aJuego: string;
+  aIni: TMemIniFile;
+begin
+  NombreJuegos.Clear;
+
+  if not FileExistsUTF8(MAMEExe) then
+    Exit;
+
+  aIni := TMemIniFile.Create(ConfigFile);
+  try
+
+    i := 0;
+    while i < Config.Juegos.Count do
+    begin
+      if Config.Juegos[i] = '' then
+      begin
+        // Si en la configuración hay una línea vacía, ponemos una línea en
+        //   en las opciones.
+        NombreJuegos.Add('--------');
+      end
+      else
+      begin
+        // Intentamos leer el nombre desde el archivo de configuración.
+        aJuego := aIni.ReadString('Juegos', Config.Juegos[i], '');
+
+        if (aJuego <> '')  then
+        begin
+          // Hemos encontrado la línea en el archivo de configuración
+          NombreJuegos.Add(aJuego);
+        end
+        else
+        begin
+          // El juego no ha sido encontrado y ejecutamos MAME para conocer
+          //   su nombre completo.
+          // aJuego ahora tiene la respuesta de MAME
+          RunCommand(MAMEExe, ['-ll', Config.Juegos[i]], aJuego, [poNoConsole]);
+
+          // Si no se encuentra el juego MAME
+          if aJuego = '' then
+          begin
+            NombreJuegos.Add('Clave no encontrada: ' + Config.Juegos[i]);
+          end
+          else
+          begin
+            // Extraemos lo que hay entre comillas
+            aJuego := copy(aJuego, pos('"', aJuego), MaxInt);
+            aJuego := AnsiDequotedStr(aJuego, '"');
+
+            NombreJuegos.Add(aJuego);
+            // Lo guardamos para no tener que estar ejecutando MAME cada vez
+            aIni.WriteString('Juegos', Config.Juegos[i], aJuego);
+            aIni.UpdateFile;
+          end;
+        end;
+      end;
+
+      Inc(i);
+    end;
+
+  finally
+    aIni.Free;
+  end;
+end;
+
 procedure TfrmLNSCompFE.ActualizarConfig;
 
   function LeeMAMEConfig(aMAMEIni: TStringList; const Key: string): string;
@@ -355,7 +432,7 @@ var
   MAMEFolder: string;
   MAMEIni: TStringList;
 begin
-  // Limpiamos variables
+  // Limpiamos variables y lista de juegos.
   Juego := '';
   MAMEExe := '';
   MAMEFolder := '';
@@ -363,16 +440,7 @@ begin
   HIFolder := '';
   NVRAMFolder := '';
   DIFFFolder := '';
-
-
-  // Lista de juegos
-  rgbJuegos.Items.Assign(Config.Juegos);
-
-  if rgbJuegos.Items.Count > 0 then
-    rgbJuegos.ItemIndex := 0; // Seleccionamos un juego
-
-  rgbJuegosResize(rgbJuegos); // Recolocando items...
-
+  rgbJuegos.Items.Clear;
 
   // Ejecutable de MAME
   MAMEExe := Config.MAMEExe;
@@ -398,13 +466,14 @@ begin
     MAMEExe := '';
     lMAMEExe.Caption := 'No se encontró ningún ejecutable de MAME';
     Exit; // Nada más que hacer...
+    // Tampoco quiero abrir el formulario de configuración automáticamente
+    //   para que se pueda salir del programa.
   end
   else
   begin
     MAMEFolder := SetAsFolder(ExtractFileDir(MAMEExe));
     lMAMEExe.Caption := MAMEExe;
   end;
-
 
   // Leyendo MAME.ini
   // No es un archivo INI al uso así que hay que leerlo como un archivo
@@ -415,7 +484,7 @@ begin
     MAMEIni := TStringList.Create;
     try
       MAMEIni.LoadFromFile(MAMEFolder + 'MAME.ini');
-      // Si el directorio de imágenes está definido, no cambiarlo.
+      // Si el directorio de imágenes ya está definido, no cambiarlo.
       if ImagesFolder = '' then
         ImagesFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
           'snapshot_directory'), MAMEFolder);
@@ -442,6 +511,18 @@ begin
 
   // La carpeta HI está definida en el código del plugin como constante
   HIFolder := CreateAbsolutePath('hi', MAMEFolder);
+
+  // Obtenemos los nombres reales de los juegos.
+  ActualizarNombreJuegos;
+
+  // Llenamos la lista de juegos
+  rgbJuegos.Items.Assign(NombreJuegos);
+
+  if rgbJuegos.Items.Count > 0 then
+    rgbJuegos.ItemIndex := 0; // Seleccionamos un juego
+
+  rgbJuegosResize(rgbJuegos); // Recolocando items...
+
 end;
 
 procedure TfrmLNSCompFE.ActualizarMedia;
@@ -514,10 +595,13 @@ var
   HoraInicio: TDateTime;
   DatosGrabarINP: RGrabarINPDatos;
   aCSV: TStringList;
-  i: Integer;
+  i: integer;
 begin
   if Juego = '' then
     Exit;
+
+  // Evitamos dobles pulsaciones de botón y otras interacciones
+  Enabled := False;
 
   MAMEFolder := ExtractFileDir(MAMEExe);
   CurrFolder := GetCurrentDirUTF8;
@@ -587,13 +671,18 @@ begin
       end;
 
       // Por el momentp no exite CopyFileUTF8...
-      CopyFile(UTF8ToSys(INPFolder + Juego + '.inp'), UTF8ToSys(aFileName), True);
+      CopyFile(UTF8ToSys(INPFolder + Juego + '.inp'),
+        UTF8ToSys(aFileName), True);
     end;
   end;
 
-
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);
+
+  Enabled := True;
+
+  // Volvemos a buscar imágenes por si se ha pulsado F12 durante el juego
+  ActualizarMedia;
 end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
@@ -603,7 +692,9 @@ begin
   if Juego = '' then
     Exit;
 
-  OpenINP.InitialDir := INPFolder;
+  Enabled := False;
+
+  SetDlgInitialDir(OpenINP, INPFolder);
   OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
     '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
 
@@ -621,12 +712,19 @@ begin
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
   ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
-    ' -speed 1 -input_directory "' + ExtractFileDir(OpenINP.FileName) + '" -pb "' + ExtractFileName(OpenINP.FileName) + '" -inpview 1 -inplayout standard');
+    ' -speed 1 -input_directory "' + ExtractFileDir(OpenINP.FileName) +
+    '" -pb "' + ExtractFileName(OpenINP.FileName) +
+    '" -inpview 1 -inplayout standard');
 
   NVRAMRestore;
 
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);
+
+  Enabled := True;
+
+  // Volvemos a buscar imágenes por si se ha pulsado F12 durante el juego
+  ActualizarMedia;
 end;
 
 procedure TfrmLNSCompFE.CrearAVI;
@@ -636,7 +734,9 @@ begin
   if Juego = '' then
     Exit;
 
-  OpenINP.InitialDir := INPFolder;
+  Enabled := False;
+
+  SetDlgInitialDir(OpenINP, INPFolder);
   OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
     '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
 
@@ -654,14 +754,20 @@ begin
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
   ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle' +
-    ' -input_directory "' + ExtractFileDir(OpenINP.FileName) + '" -pb "' +
-    ExtractFileName(OpenINP.FileName) + '" -exit_after_playback -aviwrite "' +
+    ' -input_directory "' + ExtractFileDir(OpenINP.FileName) +
+    '" -pb "' + ExtractFileName(OpenINP.FileName) +
+    '" -exit_after_playback -aviwrite "' +
     ChangeFileExt(ExtractFileName(OpenINP.FileName), '.avi') + '"');
 
   NVRAMRestore;
 
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);
+
+  Enabled := True;
+
+  // Volvemos a buscar imágenes por si se ha pulsado F12 durante el juego
+  ActualizarMedia;
 end;
 
 procedure TfrmLNSCompFE.ProbarJuego;
@@ -670,6 +776,8 @@ var
 begin
   if Juego = '' then
     Exit;
+
+  Enabled := False;
 
   MAMEFolder := ExtractFileDir(MAMEExe);
   CurrFolder := GetCurrentDirUTF8;
@@ -681,6 +789,11 @@ begin
 
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);
+
+  Enabled := True;
+
+  // Volvemos a buscar imágenes por si se ha pulsado F12 durante el juego
+  ActualizarMedia;
 end;
 
 procedure TfrmLNSCompFE.NVRAMRestore;
