@@ -49,6 +49,8 @@ const
   krsCSVSep = ',';
 
   krsParamCrearINPFmt = '%0:s -afs -throttle -speed 1 -rec %0:s.inp';
+  krsParamReprINPFmt = '%0:s -afs -throttle -speed 1 -input_directory "%1:s"'
+    +' -pb "%2:s" -inpview 1 -inplayout standard';
   krsParamCrearAVIFmt = '%0:s -noafs -fs 0 -nothrottle -input_directory "%1:s"'
     + ' -pb "%2:s" -exit_after_playback -aviwrite "%3:s"';
 
@@ -743,14 +745,14 @@ begin
   if Juego = '' then
     Exit;
 
-  Enabled := False;
-
   SetDlgInitialDir(OpenINP, INPFolder);
   OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
     '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
 
   if not OpenINP.Execute then
     Exit;
+
+  Enabled := False;
 
   MAMEFolder := ExtractFileDir(MAMEExe);
   CurrFolder := GetCurrentDirUTF8;
@@ -762,10 +764,8 @@ begin
 
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Juego + ' -input_directory inp -afs -throttle' +
-    ' -speed 1 -input_directory "' + ExtractFileDir(OpenINP.FileName) +
-    '" -pb "' + ExtractFileName(OpenINP.FileName) +
-    '" -inpview 1 -inplayout standard');
+  ExecuteProcess(MAMEExe, Format(krsParamReprINPFmt, [Juego,
+    ExtractFileDir(OpenINP.FileName), ExtractFileName(OpenINP.FileName)]));
 
   NVRAMRestore;
 
@@ -785,14 +785,14 @@ begin
   if Juego = '' then
     Exit;
 
-  Enabled := False;
-
   SetDlgInitialDir(OpenINP, INPFolder);
   OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
     '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
 
   if not OpenINP.Execute then
     Exit;
+
+  Enabled := False;
 
   MAMEFolder := ExtractFileDir(MAMEExe);
   CurrFolder := GetCurrentDirUTF8;
