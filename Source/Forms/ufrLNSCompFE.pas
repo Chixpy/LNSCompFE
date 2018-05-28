@@ -21,6 +21,55 @@ uses
   // LNSCompFE frames
   ufLNSCFEConfig, ufLNSCFEGrabarINP;
 
+const
+  krsAppTitleFmt = '%0:s %1:s';
+
+  krsConfigFileName = 'LNSCompFE.ini';
+  krsCfgIniJuegosSection = 'Juegos';
+
+  krsMAMEIni = 'MAME.ini';
+  krsMAMEIniKeySnapDir = 'snapshot_directory';
+  krsMAMEIniKeyInpDir = 'input_directory';
+  krsMAMEIniKeyNVRAMDir = 'nvram_directory';
+  krsMAMEIniKeyDiffDir = 'diff_directory';
+
+  krsMAMEDefSnapDir = 'snap';
+  krsMAMEDefInpDir = 'inp';
+  krsMAMEDefNVRAMDir = 'nvram';
+  krsMAMEDefDiffDir = 'diff';
+  krsMAMEDefHiDir = 'hi';
+
+  krsMAMENVRAMExt = '.nv';
+  krsMAMEDiffExt = '.dif';
+  krsMAMEHiExt = '.hi';
+
+  krsBackupExt = '.bak';
+  krsAVIExt = '.avi';
+  krsCSVExt = '.csv';
+  krsCSVSep = ',';
+
+  krsParamCrearINPFmt = '%0:s -afs -throttle -speed 1 -rec %0:s.inp';
+  krsParamCrearAVIFmt = '%0:s -noafs -fs 0 -nothrottle -input_directory "%1:s"'
+    + ' -pb "%2:s" -exit_after_playback -aviwrite "%3:s"';
+
+  krsLNSStatsDir = 'LNSStats';
+
+
+resourcestring
+  rsVentanaTitleFmt = '%0:s: %1:s';
+  rsVentanaPrincipalTitle = 'Ventana principal';
+
+  rsLineaJuegoVacia = '--------';
+  rsLineaJuegoNoEncontrado = 'Clave no encontrada: %0:s';
+
+  rsMAMENoEncontrado = 'No se encontró ningún ejecutable de MAME';
+
+  rsPartidaCorta = 'La partida ha durado menos de 60 segundos, ' +
+    'no será contabilizada.' + LineEnding + LineEnding +
+    'Aunque seguirá en' + LineEnding + '%0:s%1:s.inp' +
+    LineEnding + 'hasta que comiences otra.';
+
+
 type
 
   { TfrmLNSCompFE }
@@ -152,12 +201,13 @@ implementation
 
 procedure TfrmLNSCompFE.FormCreate(Sender: TObject);
 begin
-  Application.Title := Format('%0:s %1:s', [Application.Title,
-    GetFileVersion]);
-  ConfigFile := 'LNSCompFE.ini';
+  Application.Title := Format(krsAppTitleFmt,
+    [Application.Title, GetFileVersion]);
+  ConfigFile := krsConfigFileName;
 
   // Título de la ventana
-  Caption := Format('%0:s: %1:s', [Application.Title, 'Ventana principal']);
+  Caption := Format(rsVentanaTitleFmt, [Application.Title,
+    rsVentanaPrincipalTitle]);
 
   // Frames
   FImpPreview := TfmCHXImgListPreview.Create(self);
@@ -361,14 +411,15 @@ begin
       begin
         // Si en la configuración hay una línea vacía, ponemos una línea en
         //   en las opciones.
-        NombreJuegos.Add('--------');
+        NombreJuegos.Add(rsLineaJuegoVacia);
       end
       else
       begin
         // Intentamos leer el nombre desde el archivo de configuración.
-        aJuego := aIni.ReadString('Juegos', Config.Juegos[i], '');
+        aJuego := aIni.ReadString(krsCfgIniJuegosSection,
+          Config.Juegos[i], '');
 
-        if (aJuego <> '')  then
+        if (aJuego <> '') then
         begin
           // Hemos encontrado la línea en el archivo de configuración
           NombreJuegos.Add(aJuego);
@@ -378,12 +429,14 @@ begin
           // El juego no ha sido encontrado y ejecutamos MAME para conocer
           //   su nombre completo.
           // aJuego ahora tiene la respuesta de MAME
-          RunCommand(MAMEExe, ['-ll', Config.Juegos[i]], aJuego, [poNoConsole]);
+          RunCommand(MAMEExe, ['-ll', Config.Juegos[i]], aJuego,
+            [poNoConsole]);
 
           // Si no se encuentra el juego MAME
           if aJuego = '' then
           begin
-            NombreJuegos.Add('Clave no encontrada: ' + Config.Juegos[i]);
+            NombreJuegos.Add(Format(rsLineaJuegoNoEncontrado,
+              [Config.Juegos[i]]));
           end
           else
           begin
@@ -393,7 +446,7 @@ begin
 
             NombreJuegos.Add(aJuego);
             // Lo guardamos para no tener que estar ejecutando MAME cada vez
-            aIni.WriteString('Juegos', Config.Juegos[i], aJuego);
+            aIni.WriteString(krsCfgIniJuegosSection, Config.Juegos[i], aJuego);
             aIni.UpdateFile;
           end;
         end;
@@ -464,7 +517,7 @@ begin
   begin
     // Borrando el ejecutable
     MAMEExe := '';
-    lMAMEExe.Caption := 'No se encontró ningún ejecutable de MAME';
+    lMAMEExe.Caption := rsMAMENoEncontrado;
     Exit; // Nada más que hacer...
     // Tampoco quiero abrir el formulario de configuración automáticamente
     //   para que se pueda salir del programa.
@@ -479,21 +532,21 @@ begin
   // No es un archivo INI al uso así que hay que leerlo como un archivo
   //   de texto y buscamos a mano...
 
-  if FileExistsUTF8(MAMEFolder + 'MAME.ini') then
+  if FileExistsUTF8(MAMEFolder + krsMAMEIni) then
   begin
     MAMEIni := TStringList.Create;
     try
-      MAMEIni.LoadFromFile(MAMEFolder + 'MAME.ini');
+      MAMEIni.LoadFromFile(MAMEFolder + krsMAMEIni);
       // Si el directorio de imágenes ya está definido, no cambiarlo.
       if ImagesFolder = '' then
         ImagesFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
-          'snapshot_directory'), MAMEFolder);
+          krsMAMEIniKeySnapDir), MAMEFolder);
       INPFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
-        'input_directory'), MAMEFolder);
+        krsMAMEIniKeyInpDir), MAMEFolder);
       NVRAMFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
-        'nvram_directory'), MAMEFolder);
+        krsMAMEIniKeyNVRAMDir), MAMEFolder);
       DIFFFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
-        'diff_directory'), MAMEFolder);
+        krsMAMEIniKeyDiffDir), MAMEFolder);
     finally
       MAMEIni.Free;
     end;
@@ -501,16 +554,16 @@ begin
 
   // No se han definido, ponemos la configuración por defecto de MAME
   if ImagesFolder = '' then
-    ImagesFolder := CreateAbsolutePath('snap', MAMEFolder);
+    ImagesFolder := CreateAbsolutePath(krsMAMEDefSnapDir, MAMEFolder);
   if INPFolder = '' then
-    INPFolder := CreateAbsolutePath('inp', MAMEFolder);
+    INPFolder := CreateAbsolutePath(krsMAMEDefInpDir, MAMEFolder);
   if NVRAMFolder = '' then
-    NVRAMFolder := CreateAbsolutePath('nvram', MAMEFolder);
+    NVRAMFolder := CreateAbsolutePath(krsMAMEDefNVRAMDir, MAMEFolder);
   if DIFFFolder = '' then
-    DIFFFolder := CreateAbsolutePath('diff', MAMEFolder);
+    DIFFFolder := CreateAbsolutePath(krsMAMEDefDiffDir, MAMEFolder);
 
   // La carpeta HI está definida en el código del plugin como constante
-  HIFolder := CreateAbsolutePath('hi', MAMEFolder);
+  HIFolder := CreateAbsolutePath(krsMAMEDefHiDir, MAMEFolder);
 
   // Obtenemos los nombres reales de los juegos.
   ActualizarNombreJuegos;
@@ -570,22 +623,24 @@ begin
   // Renombramos los archivos
 
   aFile := HIFolder + Juego;
-  if FileExistsUTF8(aFile + '.hi') then
-    RenameFileUTF8(aFile + '.hi', aFile + '.hi.bak');
+  if FileExistsUTF8(aFile + krsMAMEHiExt) then
+    RenameFileUTF8(aFile + krsMAMEHiExt, aFile + krsMAMEHiExt + krsBackupExt);
   if DirectoryExistsUTF8(aFile) then
-    RenameFileUTF8(aFile, aFile + '.bak');
+    RenameFileUTF8(aFile, aFile + krsBackupExt);
 
   aFile := NVRAMFolder + Juego;
-  if FileExistsUTF8(aFile + '.nv') then
-    RenameFileUTF8(aFile + '.nv', aFile + '.nv.bak');
+  if FileExistsUTF8(aFile + krsMAMENVRAMExt) then
+    RenameFileUTF8(aFile + krsMAMENVRAMExt, aFile +
+      krsMAMENVRAMExt + krsBackupExt);
   if DirectoryExistsUTF8(aFile) then
-    RenameFileUTF8(aFile, aFile + '.bak');
+    RenameFileUTF8(aFile, aFile + krsBackupExt);
 
   aFile := DIFFFolder + Juego;
-  if FileExistsUTF8(aFile + '.dif') then
-    RenameFileUTF8(aFile + '.dif', aFile + '.dif.bak');
+  if FileExistsUTF8(aFile + krsMAMEDiffExt) then
+    RenameFileUTF8(aFile + krsMAMEDiffExt, aFile + krsMAMEDiffExt +
+      krsBackupExt);
   if DirectoryExistsUTF8(aFile) then
-    RenameFileUTF8(aFile, aFile + '.bak');
+    RenameFileUTF8(aFile, aFile + krsBackupExt);
 
 end;
 
@@ -613,8 +668,7 @@ begin
 
   HoraInicio := Now;
 
-  ExecuteProcess(MAMEExe, Juego + ' -afs -throttle -speed 1 -rec ' +
-    Juego + '.inp');
+  ExecuteProcess(MAMEExe, Format(krsParamCrearINPFmt, [Juego]));
 
   DatosGrabarINP.Segundos := SecondsBetween(Now, HoraInicio);
   DatosGrabarINP.Conservar := False;
@@ -624,23 +678,19 @@ begin
   // Grabando datos y demás
   if DatosGrabarINP.Segundos < 60 then
   begin
-    ShowMessage(Format(
-      'La partida ha durado menos de 60 segundos, no será contabilizada.' +
-      LineEnding + LineEnding + 'Aunque seguirá en' +
-      LineEnding + '%0:s%1:s.inp' + LineEnding +
-      'hasta que comiences otra.', [INPFolder, Juego]));
+    ShowMessage(Format(rsPartidaCorta, [INPFolder, Juego]));
   end
   else
   begin
     TfmLNSCFEGrabarINP.SimpleForm(@DatosGrabarINP, ConfigFile, '');
 
-    aFileName := SetAsFolder(MAMEFolder) + 'LNSStats';
+    aFileName := SetAsFolder(MAMEFolder) + krsLNSStatsDir;
 
     // Guardando estadísticas
     if not DirectoryExistsUTF8(aFileName) then
       ForceDirectoriesUTF8(aFileName);
 
-    aFileName := SetAsFolder(aFileName) + Juego + '.csv';
+    aFileName := SetAsFolder(aFileName) + Juego + krsCSVExt;
     aCSV := TStringList.Create;
     try
       if FileExistsUTF8(aFileName) then
@@ -648,8 +698,9 @@ begin
 
       // DateTimeToStr sin format settings, guarda las fechas igual que lo
       //   hace el DOS ;-D
-      aCSV.Add(DateTimeToStr(HoraInicio) + ',' +
-        IntToStr(DatosGrabarINP.Segundos) + ',' + DatosGrabarINP.Puntuacion);
+      aCSV.Add(DateTimeToStr(HoraInicio) + krsCSVSep +
+        IntToStr(DatosGrabarINP.Segundos) + krsCSVSep +
+        DatosGrabarINP.Puntuacion);
       aCSV.SaveToFile(aFileName);
     finally
       aCSV.Free;
@@ -753,11 +804,10 @@ begin
 
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Juego + ' -noafs -fs 0 -nothrottle' +
-    ' -input_directory "' + ExtractFileDir(OpenINP.FileName) +
-    '" -pb "' + ExtractFileName(OpenINP.FileName) +
-    '" -exit_after_playback -aviwrite "' +
-    ChangeFileExt(ExtractFileName(OpenINP.FileName), '.avi') + '"');
+  ExecuteProcess(MAMEExe, Format(krsParamCrearAVIFmt,
+    [Juego, ExtractFileDir(OpenINP.FileName),
+    ExtractFileName(OpenINP.FileName),
+    ChangeFileExt(ExtractFileName(OpenINP.FileName), krsAVIExt)]));
 
   NVRAMRestore;
 
@@ -807,34 +857,36 @@ begin
   //   y fueron creados en la sesion.
 
   aFile := HIFolder + Juego;
-  if FileExistsUTF8(aFile + '.hi') then
-    DeleteFileUTF8(aFile + '.hi');
-  if FileExistsUTF8(aFile + '.hi.bak') then
-    RenameFileUTF8(aFile + '.hi.bak', aFile + '.hi');
+  if FileExistsUTF8(aFile + krsMAMEHiExt) then
+    DeleteFileUTF8(aFile + krsMAMEHiExt);
+  if FileExistsUTF8(aFile + krsMAMEHiExt + krsBackupExt) then
+    RenameFileUTF8(aFile + krsMAMEHiExt + krsBackupExt, aFile + krsMAMEHiExt);
   if DirectoryExistsUTF8(aFile) then
     DeleteDirectory(aFile, False);
-  if DirectoryExistsUTF8(aFile + '.bak') then
-    RenameFileUTF8(aFile + '.bak', aFile);
+  if DirectoryExistsUTF8(aFile + krsBackupExt) then
+    RenameFileUTF8(aFile + krsBackupExt, aFile);
 
   aFile := NVRAMFolder + Juego;
-  if FileExistsUTF8(aFile + '.nv') then
-    DeleteFileUTF8(aFile + '.nv');
-  if FileExistsUTF8(aFile + '.nv.bak') then
-    RenameFileUTF8(aFile + '.nv.bak', aFile + '.nv');
+  if FileExistsUTF8(aFile + krsMAMENVRAMExt) then
+    DeleteFileUTF8(aFile + krsMAMENVRAMExt);
+  if FileExistsUTF8(aFile + krsMAMENVRAMExt + krsBackupExt) then
+    RenameFileUTF8(aFile + krsMAMENVRAMExt + krsBackupExt, aFile +
+      krsMAMENVRAMExt);
   if DirectoryExistsUTF8(aFile) then
     DeleteDirectory(aFile, False);
-  if DirectoryExistsUTF8(aFile + '.bak') then
-    RenameFileUTF8(aFile + '.bak', aFile);
+  if DirectoryExistsUTF8(aFile + krsBackupExt) then
+    RenameFileUTF8(aFile + krsBackupExt, aFile);
 
   aFile := DIFFFolder + Juego;
-  if FileExistsUTF8(aFile + '.dif') then
-    DeleteFileUTF8(aFile + '.dif');
-  if FileExistsUTF8(aFile + '.dif.bak') then
-    RenameFileUTF8(aFile + '.dif.bak', aFile + '.dif');
+  if FileExistsUTF8(aFile + krsMAMEDiffExt) then
+    DeleteFileUTF8(aFile + krsMAMEDiffExt);
+  if FileExistsUTF8(aFile + krsMAMEDiffExt + krsBackupExt) then
+    RenameFileUTF8(aFile + krsMAMEDiffExt + krsBackupExt, aFile +
+      krsMAMEDiffExt);
   if DirectoryExistsUTF8(aFile) then
     DeleteDirectory(aFile, False);
-  if DirectoryExistsUTF8(aFile + '.bak') then
-    RenameFileUTF8(aFile + '.bak', aFile);
+  if DirectoryExistsUTF8(aFile + krsBackupExt) then
+    RenameFileUTF8(aFile + krsBackupExt, aFile);
 end;
 
 end.
