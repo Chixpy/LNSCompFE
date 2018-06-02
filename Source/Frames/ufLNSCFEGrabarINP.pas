@@ -58,8 +58,6 @@ implementation
 
 procedure TfmLNSCFEGrabarINP.ePuntuacionEditingDone(Sender: TObject);
 begin
-  // Grabamos la puntuación de todas formas, para las estadísticas
-  Datos^.Puntuacion := ePuntuacion.Text;
 end;
 
 procedure TfmLNSCFEGrabarINP.SetDatos(const aDatos: PGrabarINPDatos);
@@ -109,6 +107,9 @@ end;
 
 destructor TfmLNSCFEGrabarINP.Destroy;
 begin
+  // Grabamos la puntuación de todas formas, para las estadísticas
+  Datos^.Puntuacion := ePuntuacion.Text;
+
   inherited Destroy;
 end;
 

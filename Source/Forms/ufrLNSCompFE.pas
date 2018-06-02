@@ -55,6 +55,7 @@ const
     + ' -pb "%2:s" -exit_after_playback -aviwrite "%3:s"';
 
   krsLNSStatsDir = 'LNSStats';
+  krsStatsHeader = '"Inicio","Segundos","Puntos"';
 
 
 resourcestring
@@ -696,7 +697,10 @@ begin
     aCSV := TStringList.Create;
     try
       if FileExistsUTF8(aFileName) then
-        aCSV.LoadFromFile(aFileName);
+        aCSV.LoadFromFile(aFileName)
+      else
+        // Añadiendo la cabecera
+        aCSV.Add(krsStatsHeader);
 
       // DateTimeToStr sin format settings, guarda las fechas igual que lo
       //   hace el DOS ;-D
