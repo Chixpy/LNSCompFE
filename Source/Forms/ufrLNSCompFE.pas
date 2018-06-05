@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, ActnList, IniPropStorage, Buttons, StdCtrls,
-  LazFileUtils, StrUtils, dateutils, LazUTF8, inifiles, process,
+  ComCtrls, ExtCtrls, ActnList, IniPropStorage, Buttons, StdCtrls, Menus,
+  LazFileUtils, StrUtils, dateutils, LazUTF8, inifiles, process, LCLIntf,
   // Misc units
   uVersionSupport,
   // CHX units
@@ -81,12 +81,18 @@ type
     actEditarConfig: TAction;
     actGrabarAVI: TAction;
     actGrabarINP: TAction;
+    actAbrirCarpetaMAME: TAction;
+    actAbrirCarpetaINP: TAction;
+    actAbrirCarpetaImages: TAction;
+    actAbrirCarpetaNVRAM: TAction;
+    actpuCarpetas: TAction;
     actReproducirINP: TAction;
     actProbarJuego: TAction;
     ActionList: TActionList;
     bConfig: TBitBtn;
     bGrabarAVI: TBitBtn;
     bJugar: TBitBtn;
+    bOpenFolder: TSpeedButton;
     bProbar: TBitBtn;
     bReproducir: TBitBtn;
     eNick: TEdit;
@@ -94,19 +100,31 @@ type
     iLogo: TImage;
     lMAMEExe: TLabel;
     lNick: TLabel;
+    pmiAbrirNVRAMFolder: TMenuItem;
+    pmiAbrirImagesFolder: TMenuItem;
+    pmiAbrirINPFolder: TMenuItem;
+    pmiAbrirMAMEFolder: TMenuItem;
     OpenINP: TOpenDialog;
     pBottom: TPanel;
+    pEjecutable: TPanel;
     pMain: TPanel;
     pNick: TPanel;
     pRight: TPanel;
     pTop: TPanel;
+    pTop2: TPanel;
+    pumAbrirCarpetas: TPopupMenu;
     rgbJuegos: TRadioGroup;
     Splitter1: TSplitter;
     StatusBar1: TStatusBar;
+    procedure actAbrirCarpetaImagesExecute(Sender: TObject);
+    procedure actAbrirCarpetaINPExecute(Sender: TObject);
+    procedure actAbrirCarpetaMAMEExecute(Sender: TObject);
+    procedure actAbrirCarpetaNVRAMExecute(Sender: TObject);
     procedure actEditarConfigExecute(Sender: TObject);
     procedure actGrabarAVIExecute(Sender: TObject);
     procedure actGrabarINPExecute(Sender: TObject);
     procedure actProbarJuegoExecute(Sender: TObject);
+    procedure actpuCarpetasExecute(Sender: TObject);
     procedure actReproducirINPExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -251,6 +269,26 @@ begin
   ActualizarConfig;
 end;
 
+procedure TfrmLNSCompFE.actAbrirCarpetaMAMEExecute(Sender: TObject);
+begin
+  OpenDocument(ExtractFilePath(MAMEExe));
+end;
+
+procedure TfrmLNSCompFE.actAbrirCarpetaNVRAMExecute(Sender: TObject);
+begin
+  OpenDocument(NVRAMFolder);
+end;
+
+procedure TfrmLNSCompFE.actAbrirCarpetaINPExecute(Sender: TObject);
+begin
+  OpenDocument(INPFolder);
+end;
+
+procedure TfrmLNSCompFE.actAbrirCarpetaImagesExecute(Sender: TObject);
+begin
+  OpenDocument(ImagesFolder);
+end;
+
 procedure TfrmLNSCompFE.actGrabarAVIExecute(Sender: TObject);
 begin
   CrearAVI;
@@ -264,6 +302,11 @@ end;
 procedure TfrmLNSCompFE.actProbarJuegoExecute(Sender: TObject);
 begin
   ProbarJuego;
+end;
+
+procedure TfrmLNSCompFE.actpuCarpetasExecute(Sender: TObject);
+begin
+  pumAbrirCarpetas.PopUp;
 end;
 
 procedure TfrmLNSCompFE.actReproducirINPExecute(Sender: TObject);

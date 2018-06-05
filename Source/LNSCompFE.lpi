@@ -23,8 +23,8 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
-      <RevisionNr Value="2"/>
-      <BuildNr Value="8"/>
+      <RevisionNr Value="3"/>
+      <BuildNr Value="9"/>
       <StringTable Comments="FrontEnd para usar con (Wolf)MAME para grabar INP limpiando NVRAM, DIFF y HI" FileDescription="FrontEnd para las competiciones de Las Noches Skyperas" InternalName="LNSCompFE" LegalCopyright="(C) 2017-2018 Chixpy" OriginalFilename="LNSCompFE.exe" ProductName="LNSCompFE" ProductVersion="0.0.0.0"/>
     </VersionInfo>
     <BuildModes Count="2">
