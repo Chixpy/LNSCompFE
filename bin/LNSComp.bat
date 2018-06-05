@@ -1,5 +1,5 @@
 @GOTO BatchMain
-:: LNSComp.bat 1.1.0
+:: LNSComp.bat 1.1.1
 :: Copyright (C) 2017-2018 Chixpy
 :: https://github.com/Chixpy/LNSCompFE
 ::
@@ -581,8 +581,6 @@ IF NOT DEFINED $LNSFichAct (
   GOTO LNSReprINPEnd
 )
 
-CALL :BorrarNVRAM "%$LNSFichAct%"
-
 ECHO.
 ECHO SELECCIONE FICHERO A REPRODUCIR
 ECHO -------------------------------
@@ -595,6 +593,8 @@ IF NOT DEFINED $SubSFFichero (
 )
 :: Quitamos el directorio porque MAME da error
 SET $SubSFFichero=%$SubSFFichero:~4%
+
+CALL :BorrarNVRAM "%$LNSFichAct%"
 
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
@@ -630,8 +630,6 @@ IF NOT DEFINED $LNSFichAct (
   GOTO LNSCrearAVI
 )
 
-CALL :BorrarNVRAM "%$LNSFichAct%"
-
 ECHO.
 ECHO SELECCIONE FICHERO A REPRODUCIR
 ECHO -------------------------------
@@ -644,6 +642,8 @@ IF NOT DEFINED $SubSFFichero (
 )
 :: Quitamos el directorio porque MAME da error y la extension para nombrar el AVI
 SET $SubSFFichero=%$SubSFFichero:~4,-4%
+
+CALL :BorrarNVRAM "%$LNSFichAct%"
 
 ECHO.
 ECHO EJECUTANDO... %$LNSFichAct% : %$SubSFFichero%
