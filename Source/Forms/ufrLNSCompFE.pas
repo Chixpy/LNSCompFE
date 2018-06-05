@@ -50,7 +50,7 @@ const
 
   krsParamCrearINPFmt = '%0:s -afs -throttle -speed 1 -rec %0:s.inp';
   krsParamReprINPFmt = '%0:s -afs -throttle -speed 1 -input_directory "%1:s"'
-    +' -pb "%2:s" -inpview 1 -inplayout standard';
+    + ' -pb "%2:s" -inpview 1 -inplayout standard';
   krsParamCrearAVIFmt = '%0:s -noafs -fs 0 -nothrottle -input_directory "%1:s"'
     + ' -pb "%2:s" -exit_after_playback -aviwrite "%3:s"';
 
@@ -271,22 +271,26 @@ end;
 
 procedure TfrmLNSCompFE.actAbrirCarpetaMAMEExecute(Sender: TObject);
 begin
-  OpenDocument(ExtractFilePath(MAMEExe));
+  if DirectoryExistsUTF8(ExtractFilePath(MAMEExe)) then
+    OpenDocument(ExtractFilePath(MAMEExe));
 end;
 
 procedure TfrmLNSCompFE.actAbrirCarpetaNVRAMExecute(Sender: TObject);
 begin
-  OpenDocument(NVRAMFolder);
+  if DirectoryExistsUTF8(NVRAMFolder) then
+    OpenDocument(NVRAMFolder);
 end;
 
 procedure TfrmLNSCompFE.actAbrirCarpetaINPExecute(Sender: TObject);
 begin
-  OpenDocument(INPFolder);
+  if DirectoryExistsUTF8(INPFolder) then
+    OpenDocument(INPFolder);
 end;
 
 procedure TfrmLNSCompFE.actAbrirCarpetaImagesExecute(Sender: TObject);
 begin
-  OpenDocument(ImagesFolder);
+  if DirectoryExistsUTF8(ImagesFolder) then
+    OpenDocument(ImagesFolder);
 end;
 
 procedure TfrmLNSCompFE.actGrabarAVIExecute(Sender: TObject);
@@ -811,8 +815,9 @@ begin
 
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Format(krsParamReprINPFmt, [Juego,
-    ExtractFileDir(OpenINP.FileName), ExtractFileName(OpenINP.FileName)]));
+  ExecuteProcess(MAMEExe, Format(krsParamReprINPFmt,
+    [Juego, ExtractFileDir(OpenINP.FileName),
+    ExtractFileName(OpenINP.FileName)]));
 
   NVRAMRestore;
 
