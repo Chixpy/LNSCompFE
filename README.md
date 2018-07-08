@@ -1,4 +1,7 @@
 ## LNSCompFE ##
+
+![LNSCompFE 1.0.X.X](../../wiki/img/LNSCompFE/Main.png)
+
 Front-End para las competiciones de [Las Noches Skyperas](http://nochesskyperas.1foro.com).
 
 LNSCompFE es un pequeño Front-End pensado para facilitar un poco los intentos en los campeonatos de [Las Noches Skyperas](http://nochesskyperas.1foro.com). Aunque nada impide configurarse para su uso e interés personal, ya que ofrece facilidades a la hora de grabar INP con (Wolf)MAME.
