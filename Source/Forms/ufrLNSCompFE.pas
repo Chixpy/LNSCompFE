@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs,
-  ComCtrls, ExtCtrls, ActnList, IniPropStorage, Buttons, StdCtrls, Menus,
+  ComCtrls, ExtCtrls, ActnList, Buttons, StdCtrls, Menus,
   LazFileUtils, StrUtils, dateutils, LazUTF8, inifiles, process, LCLIntf,
   // Misc units
   uVersionSupport,
@@ -48,11 +48,14 @@ const
   krsCSVExt = '.csv';
   krsCSVSep = ',';
 
-  krsParamCrearINPFmt = '%0:s -afs -throttle -speed 1 -rec %0:s.inp';
-  krsParamReprINPFmt = '%0:s -afs -throttle -speed 1 -input_directory "%1:s"'
-    + ' -pb "%2:s" -inpview 1 -inplayout standard';
-  krsParamCrearAVIFmt = '%0:s -noafs -fs 0 -nothrottle -input_directory "%1:s"'
-    + ' -pb "%2:s" -exit_after_playback -aviwrite "%3:s"';
+
+  krsParamCrearINPOpc = '';
+  krsParamCrearINPFmt = '-afs -throttle -speed 1 -rec %0:s.inp';
+  krsParamReprINPOpc =
+    '-afs -throttle -speed 1 -inpview 1 -inplayout standard';
+  krsParamReprINPFmt = '-input_directory "%1:s" -pb "%2:s"';
+  krsParamCrearAVIOpc = '-noafs -fs 0 -nothrottle -exit_after_playback';
+  krsParamCrearAVIFmt = '-input_directory "%1:s" -pb "%2:s" -aviwrite "%3:s"';
 
   krsLNSStatsDir = 'LNSStats';
   krsStatsHeader = '"Inicio","Segundos","Puntos"';
@@ -544,6 +547,7 @@ begin
   NVRAMFolder := '';
   DIFFFolder := '';
   rgbJuegos.Items.Clear;
+  ActualizarMedia;
 
   // Ejecutable de MAME
   MAMEExe := Config.MAMEExe;
@@ -697,6 +701,7 @@ end;
 procedure TfrmLNSCompFE.CrearINP;
 var
   MAMEFolder, CurrFolder, aFileName: string;
+  Parametros: string;
   HoraInicio: TDateTime;
   DatosGrabarINP: RGrabarINPDatos;
   aCSV: TStringList;
@@ -716,9 +721,13 @@ begin
 
   NVRAMBackup;
 
+  Parametros := Juego + ' ' + krsParamCrearINPOpc + ' ' +
+    Config.ParAdicGrabarINP + ' ' + krsParamCrearINPFmt;
+  Parametros := Format(Parametros, [Juego]);
+
   HoraInicio := Now;
 
-  ExecuteProcess(MAMEExe, Format(krsParamCrearINPFmt, [Juego]));
+  ExecuteProcess(MAMEExe, Parametros);
 
   DatosGrabarINP.Segundos := SecondsBetween(Now, HoraInicio);
   DatosGrabarINP.Conservar := False;
@@ -791,7 +800,7 @@ end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
 var
-  MAMEFolder, CurrFolder: string;
+  MAMEFolder, CurrFolder, Parametros: string;
 begin
   if Juego = '' then
     Exit;
@@ -813,11 +822,15 @@ begin
 
   NVRAMBackup;
 
+  Parametros := Juego + ' ' + krsParamReprINPOpc + ' ' +
+    Config.ParAdicReprINP + ' ' + krsParamReprINPFmt;
+  Parametros := Format(Parametros,
+    [Juego, ExtractFileDir(OpenINP.FileName),
+    ExtractFileName(OpenINP.FileName)]);
+
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Format(krsParamReprINPFmt,
-    [Juego, ExtractFileDir(OpenINP.FileName),
-    ExtractFileName(OpenINP.FileName)]));
+  ExecuteProcess(MAMEExe, Parametros);
 
   NVRAMRestore;
 
@@ -832,7 +845,7 @@ end;
 
 procedure TfrmLNSCompFE.CrearAVI;
 var
-  MAMEFolder, CurrFolder: string;
+  MAMEFolder, CurrFolder, Parametros: string;
 begin
   if Juego = '' then
     Exit;
@@ -854,12 +867,15 @@ begin
 
   NVRAMBackup;
 
+  Parametros := Juego + ' ' + krsParamCrearAVIOpc + ' ' +
+    Config.ParAdicGrabarAVI + ' ' + krsParamCrearAVIFmt;
+  Parametros := Format(Parametros, [Juego, ExtractFileDir(OpenINP.FileName),
+    ExtractFileName(OpenINP.FileName),
+    ChangeFileExt(ExtractFileName(OpenINP.FileName), krsAVIExt)]);
+
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Format(krsParamCrearAVIFmt,
-    [Juego, ExtractFileDir(OpenINP.FileName),
-    ExtractFileName(OpenINP.FileName),
-    ChangeFileExt(ExtractFileName(OpenINP.FileName), krsAVIExt)]));
+  ExecuteProcess(MAMEExe, Parametros);
 
   NVRAMRestore;
 
@@ -874,7 +890,7 @@ end;
 
 procedure TfrmLNSCompFE.ProbarJuego;
 var
-  MAMEFolder, CurrFolder: string;
+  MAMEFolder, CurrFolder, Parametros: string;
 begin
   if Juego = '' then
     Exit;
@@ -887,7 +903,10 @@ begin
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(MAMEFolder);
 
-  ExecuteProcess(MAMEExe, Juego);
+  Parametros := Juego + ' ' + Config.ParAdicProbarJuego;
+  Parametros := Format(Parametros, [Juego]);
+
+  ExecuteProcess(MAMEExe, Parametros);
 
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);

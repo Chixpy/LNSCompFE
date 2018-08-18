@@ -1,139 +1,312 @@
 inherited fmLNSCFEConfig: TfmLNSCFEConfig
-  Height = 322
-  Width = 332
-  ClientHeight = 322
-  ClientWidth = 332
-  DesignLeft = 379
-  DesignTop = 197
+  Height = 410
+  Width = 548
+  ClientHeight = 410
+  ClientWidth = 548
+  DesignLeft = 264
+  DesignTop = 109
   inherited pButtons: TPanel
-    Top = 296
-    Width = 332
-    ClientWidth = 332
-    TabOrder = 2
+    Top = 384
+    Width = 548
+    ClientWidth = 548
     inherited chkCloseOnSave: TCheckBox
-      Left = 35
+      Left = 89
     end
     inherited bSave: TBitBtn
-      Left = 119
+      Left = 227
     end
     inherited bCancel: TBitBtn
-      Left = 216
+      Left = 378
     end
   end
-  object gbxMAMEConfig: TGroupBox[1]
+  object PageControl1: TPageControl[1]
     Left = 0
-    Height = 141
+    Height = 380
     Top = 0
-    Width = 332
-    Align = alTop
-    AutoSize = True
-    Caption = 'Configuración (Wolf)MAME'
-    ClientHeight = 121
-    ClientWidth = 328
-    TabOrder = 0
-    object lMAMEExe: TLabel
-      Left = 0
-      Height = 15
-      Top = 0
-      Width = 328
-      Align = alTop
-      Caption = 'Ejecutable de MAME'
-      ParentColor = False
-    end
-    object eMAMEExe: TFileNameEdit
-      Left = 0
-      Height = 23
-      Top = 45
-      Width = 328
-      DialogTitle = 'Ejecutable de WolfMAME'
-      DialogOptions = [ofNoChangeDir, ofEnableSizing, ofViewDetail]
-      Filter = 'Ejecutables|*.exe;*.bat|Todos los archivos|*.*'
-      FilterIndex = 0
-      DefaultExt = 'exe'
-      HideDirectories = False
-      ButtonWidth = 23
-      NumGlyphs = 1
-      Align = alTop
-      MaxLength = 0
-      TabOrder = 0
-      OnButtonClick = eMAMEExeButtonClick
-    end
-    object lImages: TLabel
-      Left = 0
-      Height = 15
-      Top = 68
-      Width = 328
-      Align = alTop
-      Caption = 'Imágenes'
-      ParentColor = False
-    end
-    object eImagesFolder: TDirectoryEdit
-      Left = 0
-      Height = 23
-      Top = 98
-      Width = 328
-      DialogOptions = [ofNoChangeDir, ofEnableSizing, ofViewDetail]
-      ShowHidden = False
-      ButtonWidth = 23
-      NumGlyphs = 1
-      Align = alTop
-      MaxLength = 0
-      TabOrder = 1
-      OnChange = eImagesFolderChange
-    end
-    object lAyudaEjecutable: TLabel
-      Left = 0
-      Height = 30
-      Top = 15
-      Width = 328
-      Align = alTop
-      Caption = 'Si se deja vacío, se buscará un ejecutable en el directorio del programa'
-      ParentColor = False
-      WordWrap = True
-    end
-    object lAyudaImagenes: TLabel
-      Left = 0
-      Height = 15
-      Top = 83
-      Width = 328
-      Align = alTop
-      Caption = 'Si se deja vacío, usará el configurado en el archivo MAME.ini'
-      ParentColor = False
-      WordWrap = True
-    end
-  end
-  object gbxJuegos: TGroupBox[2]
-    Left = 0
-    Height = 147
-    Top = 145
-    Width = 332
+    Width = 548
+    ActivePage = pagAvanzada
     Align = alClient
-    Caption = 'Juegos'
-    ClientHeight = 127
-    ClientWidth = 328
+    TabIndex = 1
     TabOrder = 1
-    object mJuegos: TMemo
-      Left = 0
-      Height = 112
-      Top = 15
-      Width = 328
-      Align = alClient
-      ScrollBars = ssAutoVertical
-      TabOrder = 0
+    object pagBasica: TTabSheet
+      Caption = 'Básica'
+      ClientHeight = 352
+      ClientWidth = 540
+      object gbxMAMEConfig: TGroupBox
+        Left = 0
+        Height = 73
+        Top = 0
+        Width = 540
+        Align = alTop
+        AutoSize = True
+        Caption = 'Configuración (Wolf)MAME'
+        ClientHeight = 53
+        ClientWidth = 536
+        TabOrder = 0
+        object lMAMEExe: TLabel
+          Left = 0
+          Height = 15
+          Top = 0
+          Width = 536
+          Align = alTop
+          Caption = 'Ejecutable de MAME'
+          ParentColor = False
+        end
+        object eMAMEExe: TFileNameEdit
+          Left = 0
+          Height = 23
+          Top = 30
+          Width = 536
+          DialogTitle = 'Ejecutable de WolfMAME'
+          DialogOptions = [ofNoChangeDir, ofEnableSizing, ofViewDetail]
+          Filter = 'Ejecutables|*.exe;*.bat|Todos los archivos|*.*'
+          FilterIndex = 0
+          DefaultExt = 'exe'
+          HideDirectories = False
+          ButtonWidth = 23
+          NumGlyphs = 1
+          Align = alTop
+          MaxLength = 0
+          TabOrder = 0
+          OnButtonClick = eMAMEExeButtonClick
+        end
+        object lAyudaEjecutable: TLabel
+          Left = 0
+          Height = 15
+          Top = 15
+          Width = 536
+          Align = alTop
+          Caption = 'Si se deja vacío, se buscará un ejecutable en el directorio del programa'
+          Enabled = False
+          ParentColor = False
+          WordWrap = True
+        end
+      end
+      object gbxImagenes: TGroupBox
+        Left = 0
+        Height = 58
+        Top = 73
+        Width = 540
+        Align = alTop
+        AutoSize = True
+        Caption = 'Imágenes'
+        ClientHeight = 38
+        ClientWidth = 536
+        TabOrder = 1
+        object lAyudaImagenes: TLabel
+          Left = 0
+          Height = 15
+          Top = 0
+          Width = 536
+          Align = alTop
+          Caption = 'Si se deja vacío, usará el configurado en el archivo MAME.ini'
+          Enabled = False
+          ParentColor = False
+          WordWrap = True
+        end
+        object eImagesFolder: TDirectoryEdit
+          Left = 0
+          Height = 23
+          Top = 15
+          Width = 536
+          DialogOptions = [ofNoChangeDir, ofEnableSizing, ofViewDetail]
+          ShowHidden = False
+          ButtonWidth = 23
+          NumGlyphs = 1
+          Align = alTop
+          MaxLength = 0
+          TabOrder = 0
+          OnChange = eImagesFolderChange
+        end
+      end
+      object gbxJuegos: TGroupBox
+        Left = 0
+        Height = 221
+        Top = 131
+        Width = 540
+        Align = alClient
+        Caption = 'Juegos'
+        ClientHeight = 201
+        ClientWidth = 536
+        TabOrder = 2
+        object mJuegos: TMemo
+          Left = 0
+          Height = 186
+          Top = 15
+          Width = 536
+          Align = alClient
+          ScrollBars = ssAutoVertical
+          TabOrder = 0
+        end
+        object lJuegos: TLabel
+          Left = 0
+          Height = 15
+          Top = 0
+          Width = 536
+          Align = alTop
+          Caption = 'Un identificador de juego por cada línea'
+          Enabled = False
+          ParentColor = False
+          WordWrap = True
+        end
+      end
     end
-    object lJuegos: TLabel
-      Left = 0
-      Height = 15
-      Top = 0
-      Width = 328
-      Align = alTop
-      Caption = 'Un identificador de juego por cada línea'
-      ParentColor = False
-      WordWrap = True
+    object pagAvanzada: TTabSheet
+      Caption = 'Avanzada'
+      ClientHeight = 352
+      ClientWidth = 540
+      object gbxParAdicionales: TGroupBox
+        Left = 0
+        Height = 342
+        Top = 0
+        Width = 540
+        Align = alTop
+        AutoSize = True
+        Caption = 'Parámetros adicionales en la línea de comandos'
+        ClientHeight = 322
+        ClientWidth = 536
+        ParentFont = False
+        TabOrder = 0
+        object gbxParGrabarINP: TGroupBox
+          Left = 0
+          Height = 58
+          Top = 90
+          Width = 536
+          Align = alTop
+          AutoSize = True
+          Caption = 'Grabar INP'
+          ClientHeight = 38
+          ClientWidth = 532
+          TabOrder = 0
+          object eParGrabarINP: TEdit
+            Left = 0
+            Height = 23
+            Top = 15
+            Width = 532
+            Align = alTop
+            TabOrder = 0
+          end
+          object lAyudaParGrabarINP: TLabel
+            Left = 0
+            Height = 15
+            Top = 0
+            Width = 532
+            Align = alTop
+            Caption = 'Fijo: Velocidad 100%, frameskip automático y lo necesario para guardar un INP'
+            Enabled = False
+            FocusControl = eParGrabarINP
+            ParentColor = False
+          end
+        end
+        object gbxParReprINP: TGroupBox
+          Left = 0
+          Height = 58
+          Top = 148
+          Width = 536
+          Align = alTop
+          AutoSize = True
+          Caption = 'Reproducir INP'
+          ClientHeight = 38
+          ClientWidth = 532
+          TabOrder = 1
+          object lAyudaParReprINP: TLabel
+            Left = 0
+            Height = 15
+            Top = 0
+            Width = 532
+            Align = alTop
+            Caption = 'Fijo: Lo necesario para que se reproduzca el INP. Opcional: Barra de pulsaciones'
+            Enabled = False
+            FocusControl = eParReprINP
+            ParentColor = False
+          end
+          object eParReprINP: TEdit
+            Left = 0
+            Height = 23
+            Top = 15
+            Width = 532
+            Align = alTop
+            TabOrder = 0
+          end
+        end
+        object gbxParGrabarAVI: TGroupBox
+          Left = 0
+          Height = 58
+          Top = 206
+          Width = 536
+          Align = alTop
+          AutoSize = True
+          Caption = 'Grabar AVI'
+          ClientHeight = 38
+          ClientWidth = 532
+          TabOrder = 2
+          object lAyudaParGrabarAVI: TLabel
+            Left = 0
+            Height = 15
+            Top = 0
+            Width = 532
+            Align = alTop
+            Caption = 'Fijo: Frameskip 0 y lo necesario para grabar el AVI. Opcional: A tope de velocidad'
+            Enabled = False
+            FocusControl = eParGrabarAVI
+            ParentColor = False
+          end
+          object eParGrabarAVI: TEdit
+            Left = 0
+            Height = 23
+            Top = 15
+            Width = 532
+            Align = alTop
+            TabOrder = 0
+          end
+        end
+        object gbxParProbarJuego: TGroupBox
+          Left = 0
+          Height = 58
+          Top = 264
+          Width = 536
+          Align = alTop
+          AutoSize = True
+          Caption = 'Probar juego'
+          ClientHeight = 38
+          ClientWidth = 532
+          TabOrder = 3
+          object lAyudaParProbarJuego: TLabel
+            Left = 0
+            Height = 15
+            Top = 0
+            Width = 532
+            Align = alTop
+            Caption = 'No se añade ningún parámetro adicional'
+            Enabled = False
+            FocusControl = eParProbarJuego
+            ParentColor = False
+          end
+          object eParProbarJuego: TEdit
+            Left = 0
+            Height = 23
+            Top = 15
+            Width = 532
+            Align = alTop
+            TabOrder = 0
+          end
+        end
+        object lAyudaParametros: TLabel
+          Left = 0
+          Height = 90
+          Top = 0
+          Width = 536
+          Align = alTop
+          Caption = 'Aquí se pueden añadir los parámetros que se quieran añadir en la línea de comandos de (Wolf)MAME. Poner algún parametros no soportado por MAME o incorrecto puede provocar que no se ejecute MAME.'#13#10#13#10'Sin embargo, en cada opción hay unos parámetros fijos que no podrán ser modificados para el correcto funcionamiento del programa. Y otros que se pueden desactivar o modificar.'
+          Enabled = False
+          ParentColor = False
+          WordWrap = True
+        end
+      end
     end
   end
-  inherited alPropEditor: TActionList[3]
+  inherited alPropEditor: TActionList[2]
   end
-  inherited ilPropEditor: TImageList[4]
+  inherited ilPropEditor: TImageList[3]
   end
 end

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Buttons, ActnList, EditBtn,
+  StdCtrls, Buttons, ActnList, EditBtn, ComCtrls,
   // CHX units
   uCHXDlgUtils,
   // CHX frames
@@ -21,14 +21,31 @@ type
   TfmLNSCFEConfig = class(TfmCHXPropEditor)
     eImagesFolder: TDirectoryEdit;
     eMAMEExe: TFileNameEdit;
+    eParGrabarINP: TEdit;
+    eParGrabarAVI: TEdit;
+    eParProbarJuego: TEdit;
+    eParReprINP: TEdit;
+    gbxImagenes: TGroupBox;
     gbxJuegos: TGroupBox;
     gbxMAMEConfig: TGroupBox;
+    gbxParAdicionales: TGroupBox;
+    gbxParGrabarAVI: TGroupBox;
+    gbxParGrabarINP: TGroupBox;
+    gbxParProbarJuego: TGroupBox;
+    gbxParReprINP: TGroupBox;
     lAyudaEjecutable: TLabel;
     lAyudaImagenes: TLabel;
-    lImages: TLabel;
+    lAyudaParametros: TLabel;
     lJuegos: TLabel;
     lMAMEExe: TLabel;
+    lAyudaParGrabarINP: TLabel;
+    lAyudaParGrabarAVI: TLabel;
+    lAyudaParProbarJuego: TLabel;
+    lAyudaParReprINP: TLabel;
     mJuegos: TMemo;
+    PageControl1: TPageControl;
+    pagBasica: TTabSheet;
+    pagAvanzada: TTabSheet;
     procedure eImagesFolderChange(Sender: TObject);
     procedure eMAMEExeButtonClick(Sender: TObject);
 
@@ -78,9 +95,16 @@ end;
 
 procedure TfmLNSCFEConfig.DoClearFrameData;
 begin
-  eMAMEExe.Text := '';
-  eImagesFolder.Text := '';
+  // Basico
+  eMAMEExe.Clear;
+  eImagesFolder.Clear;
   mJuegos.Clear;
+
+  // Avanzado
+  eParGrabarINP.Clear;
+  eParReprINP.Clear;
+  eParGrabarAVI.Clear;
+  eParProbarJuego.Clear;
 end;
 
 procedure TfmLNSCFEConfig.DoLoadFrameData;
@@ -92,16 +116,30 @@ begin
     Exit;
   end;
 
+  // Básico
   eMAMEExe.Text := Config.MAMEExe;
   eImagesFolder.Text := Config.ImagesFolder;
   mJuegos.Lines.Assign(Config.Juegos);
+
+  // Avanzado
+  eParGrabarINP.Text := Config.ParAdicGrabarINP;
+  eParReprINP.Text := Config.ParAdicReprINP;
+  eParGrabarAVI.Text := Config.ParAdicGrabarAVI;
+  eParProbarJuego.Text := Config.ParAdicProbarJuego;
 end;
 
 procedure TfmLNSCFEConfig.DoSaveFrameData;
 begin
+  // Básico
   Config.MAMEExe := eMAMEExe.Text;
   Config.ImagesFolder := eImagesFolder.Text;
   Config.Juegos.Assign(mJuegos.Lines);
+
+  // Avanzado
+  Config.ParAdicGrabarINP := eParGrabarINP.Text;
+  Config.ParAdicReprINP := eParReprINP.Text;
+  Config.ParAdicGrabarAVI := eParGrabarAVI.Text;
+  Config.ParAdicProbarJuego := eParProbarJuego.Text;
 end;
 
 class function TfmLNSCFEConfig.SimpleModalForm(aConfig: cLNSCFEConfig;
@@ -128,6 +166,8 @@ begin
   OnClearFrameData := @DoClearFrameData;
   OnLoadFrameData := @DoLoadFrameData;
   OnSaveFrameData := @DoSaveFrameData;
+
+  PageControl1.ActivePageIndex := 0;
 end;
 
 destructor TfmLNSCFEConfig.Destroy;
