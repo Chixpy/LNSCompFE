@@ -42,6 +42,9 @@ const
   krsMAMENVRAMExt = '.nv';
   krsMAMEDiffExt = '.dif';
   krsMAMEHiExt = '.hi';
+  krsMAMEINPExt = '.inp';
+  krsINPFileFilter = 'Partidas de %0:s|%0:s*' + krsMAMEINPExt +
+    '|Todos lo ficheros INP|*' + krsMAMEINPExt + '|Todos lo ficheros|*.*';
 
   krsBackupExt = '.bak';
   krsAVIExt = '.avi';
@@ -49,12 +52,19 @@ const
   krsCSVSep = ',';
 
 
-  krsParamCrearINPOpc = '';
+  // TODO: WolfMAME .181 tiene un fallo respecto al valor por defecto del
+  //   parámetro -inplayout así que lo eliminamos.
+  // Cuando se use otra versión de WolfMAME +0.185 habría que quitarlo
+  //   de los parámetros opcionales.
+  krsParamCrearINPOpc = '-inplayout standard';
   krsParamCrearINPFmt = '-afs -throttle -speed 1 -rec %0:s.inp';
+
   krsParamReprINPOpc =
     '-afs -throttle -speed 1 -inpview 1 -inplayout standard';
   krsParamReprINPFmt = '-input_directory "%1:s" -pb "%2:s"';
-  krsParamCrearAVIOpc = '-noafs -fs 0 -nothrottle -exit_after_playback';
+
+  krsParamCrearAVIOpc =
+    '-inplayout standard -noafs -fs 0 -nothrottle -exit_after_playback';
   krsParamCrearAVIFmt = '-input_directory "%1:s" -pb "%2:s" -aviwrite "%3:s"';
 
   krsLNSStatsDir = 'LNSStats';
@@ -255,7 +265,7 @@ begin
     AnsiReplaceText(GraphicFileMask(TGraphic), '*.', ''), ';', ',');
 
   // Debería ir en la ventana de configuración pero la voy a dejar en
-  //   la principal
+  //   la principal para tenerlo presente.
   eNick.Text := Config.Nick;
 
   // Asignamos el parent a los frames
@@ -462,8 +472,8 @@ begin
     begin
       if Config.Juegos[i] = '' then
       begin
-        // Si en la configuración hay una línea vacía, ponemos una línea en
-        //   en las opciones.
+        // Si en la configuración hay una línea vacía, ponemos una línea
+        //   entre las opciones.
         NombreJuegos.Add(rsLineaJuegoVacia);
       end
       else
@@ -483,7 +493,7 @@ begin
           //   su nombre completo.
           // aJuego ahora tiene la respuesta de MAME
           RunCommand(MAMEExe, ['-ll', Config.Juegos[i]], aJuego,
-            [poNoConsole]);
+            [poNoConsole, poWaitOnExit]);
 
           // Si no se encuentra el juego MAME
           if aJuego = '' then
@@ -727,7 +737,7 @@ begin
 
   HoraInicio := Now;
 
-  ExecuteProcess(MAMEExe, Parametros);
+  RunCommand('"' + MAMEExe + '" ' + Parametros, DatosGrabarINP.OutputMAME);
 
   DatosGrabarINP.Segundos := SecondsBetween(Now, HoraInicio);
   DatosGrabarINP.Conservar := False;
@@ -800,7 +810,7 @@ end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
 var
-  MAMEFolder, CurrFolder, Parametros: string;
+  MAMEFolder, CurrFolder, Parametros, sOutput: string;
 begin
   if Juego = '' then
     Exit;
@@ -830,7 +840,10 @@ begin
 
   // El directorio del fichero INP tiene que estar definido por
   //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Parametros);
+  RunCommand('"' + MAMEExe + '" ' + Parametros, sOutput);
+
+  if sOutput <> '' then
+    ShowMessage(sOutput);
 
   NVRAMRestore;
 
@@ -845,14 +858,13 @@ end;
 
 procedure TfrmLNSCompFE.CrearAVI;
 var
-  MAMEFolder, CurrFolder, Parametros: string;
+  MAMEFolder, CurrFolder, Parametros, sOutput: string;
 begin
   if Juego = '' then
     Exit;
 
   SetDlgInitialDir(OpenINP, INPFolder);
-  OpenINP.Filter := 'Partidas de ' + Juego + '|' + Juego +
-    '*.inp|Todos lo ficheros INP |*.inp|Todos lo ficheros|*.*';
+  OpenINP.Filter := Format(krsINpFileFilter, [Juego]);
 
   if not OpenINP.Execute then
     Exit;
@@ -869,13 +881,15 @@ begin
 
   Parametros := Juego + ' ' + krsParamCrearAVIOpc + ' ' +
     Config.ParAdicGrabarAVI + ' ' + krsParamCrearAVIFmt;
-  Parametros := Format(Parametros, [Juego, ExtractFileDir(OpenINP.FileName),
+  Parametros := Format(Parametros,
+    [Juego, ExtractFileDir(OpenINP.FileName),
     ExtractFileName(OpenINP.FileName),
     ChangeFileExt(ExtractFileName(OpenINP.FileName), krsAVIExt)]);
 
-  // El directorio del fichero INP tiene que estar definido por
-  //   -input_directory ya que -pb no acepta rutas
-  ExecuteProcess(MAMEExe, Parametros);
+  RunCommand('"' + MAMEExe + '" ' + Parametros, sOutput);
+
+  if sOutput <> '' then
+    ShowMessage(sOutput);
 
   NVRAMRestore;
 
@@ -890,7 +904,7 @@ end;
 
 procedure TfrmLNSCompFE.ProbarJuego;
 var
-  MAMEFolder, CurrFolder, Parametros: string;
+  MAMEFolder, CurrFolder, Parametros, sOutput: string;
 begin
   if Juego = '' then
     Exit;
@@ -906,7 +920,10 @@ begin
   Parametros := Juego + ' ' + Config.ParAdicProbarJuego;
   Parametros := Format(Parametros, [Juego]);
 
-  ExecuteProcess(MAMEExe, Parametros);
+  RunCommand('"' + MAMEExe + '" ' + Parametros, sOutput);
+
+  if sOutput <> '' then
+    ShowMessage(sOutput);
 
   if MAMEFolder <> '' then
     SetCurrentDirUTF8(CurrFolder);
@@ -924,7 +941,7 @@ begin
   if Juego = '' then
     Exit;
 
-  // Borramos primero los archivos por si previamente no exisistían
+  // Borramos primero los archivos por si previamente no existían
   //   y fueron creados en la sesion.
 
   aFile := HIFolder + Juego;

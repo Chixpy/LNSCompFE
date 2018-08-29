@@ -68,7 +68,6 @@ inherited fmLNSCFEGrabarINP: TfmLNSCFEGrabarINP
       Top = 19
       Width = 364
       Align = alTop
-      OnEditingDone = ePuntuacionEditingDone
       TabOrder = 0
       TextHint = 'Introduce la puntuación o el tiempo logrado'
     end

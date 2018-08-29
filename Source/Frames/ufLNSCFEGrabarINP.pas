@@ -20,6 +20,7 @@ type
     Segundos: integer;
     Puntuacion: string;
     Conservar: boolean;
+    OutputMAME: string;
   end;
   PGrabarINPDatos = ^RGrabarINPDatos;
 
@@ -32,7 +33,6 @@ type
     pEstadisticas: TPanel;
     pInfo: TPanel;
     rgbConservar: TRadioGroup;
-    procedure ePuntuacionEditingDone(Sender: TObject);
   private
     FDatos: PGrabarINPDatos;
     procedure SetDatos(const aDatos: PGrabarINPDatos);
@@ -56,10 +56,6 @@ implementation
 
 { TfmLNSCFEGrabarINP }
 
-procedure TfmLNSCFEGrabarINP.ePuntuacionEditingDone(Sender: TObject);
-begin
-end;
-
 procedure TfmLNSCFEGrabarINP.SetDatos(const aDatos: PGrabarINPDatos);
 begin
   if FDatos = aDatos then
@@ -67,9 +63,13 @@ begin
   FDatos := aDatos;
 
   Enabled := Assigned(Datos);
+
   if Enabled then
-    pEstadisticas.Caption :=
-      Format('La partida duró %0:d segundos', [aDatos^.Segundos]);
+  begin
+    pEstadisticas.Caption := aDatos^.OutputMAME;
+     // Format('La partida duró %0:d segundos', [aDatos^.Segundos]);
+
+  end;
 end;
 
 procedure TfmLNSCFEGrabarINP.DoSaveData;
