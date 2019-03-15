@@ -647,7 +647,7 @@ var
   i: integer;
   aFile: string;
 begin
-  ImpPreview.StrList := nil;
+  ImpPreview.FileList := nil;
   ImageList.Clear;
 
   if (Juego = '') or (ImagesFolder = '') then
@@ -673,7 +673,7 @@ begin
   FindAllFiles(ImageList, ImagesFolder + SetAsFolder(Juego),
     FileMaskFromStringList(ImageExt), True);
 
-  ImpPreview.StrList := ImageList;
+  ImpPreview.FileList := ImageList;
 end;
 
 procedure TfrmLNSCompFE.NVRAMBackup;

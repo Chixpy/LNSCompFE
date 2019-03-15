@@ -26,7 +26,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="12"/>
+      <BuildNr Value="13"/>
       <StringTable Comments="FrontEnd para usar con (Wolf)MAME para grabar INP limpiando NVRAM, DIFF y HI" FileDescription="FrontEnd para las competiciones de Las Noches Skyperas" InternalName="LNSCompFE" LegalCopyright="(C) 2017-2018 Chixpy" OriginalFilename="LNSCompFE.exe" ProductName="LNSCompFE" ProductVersion="0.0.0.0"/>
     </VersionInfo>
     <BuildModes Count="2">
@@ -82,7 +82,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="23">
+    <Units Count="24">
       <Unit0>
         <Filename Value="LNSCompFE.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -208,6 +208,11 @@
         <Filename Value="..\CHXPas\Units\uCHXDlgUtils.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
+      <Unit23>
+        <Filename Value="..\CHXPas\Frames\ufCHXFileListPreview.pas"/>
+        <IsPartOfProject Value="True"/>
+        <HasResources Value="True"/>
+      </Unit23>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

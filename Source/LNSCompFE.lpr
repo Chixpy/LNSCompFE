@@ -15,7 +15,7 @@ uses
   // CHX forms
   ufrCHXForm,
   // CHX frames
-  ufCHXStrLstPreview, ufCHXImgViewer, ufCHXListPreview,
+  ufCHXFileListPreview, ufCHXImgViewer, ufCHXListPreview,
   // LNSCompFE classes
   ucLNSCFEConfig,
   // LNSCompFE forms

@@ -6,37 +6,37 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   OnDestroy = FormDestroy
   object StatusBar1: TStatusBar[0]
     Left = 4
-    Height = 23
-    Top = 373
-    Width = 632
+    Height = 29
+    Top = 467
+    Width = 792
     AutoHint = True
     Panels = <>
     SizeGrip = False
   end
   object Splitter1: TSplitter[1]
-    Left = 285
-    Height = 191
-    Top = 148
+    Left = 445
+    Height = 276
+    Top = 153
     Width = 5
     Align = alRight
     ResizeAnchor = akRight
   end
   object pMain: TPanel[2]
     Left = 4
-    Height = 191
-    Top = 148
-    Width = 277
+    Height = 276
+    Top = 153
+    Width = 437
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 191
-    ClientWidth = 277
+    ClientHeight = 276
+    ClientWidth = 437
     TabOrder = 1
     object rgbJuegos: TRadioGroup
       Left = 0
-      Height = 191
+      Height = 276
       Hint = 'Selecciona el juego'
       Top = 0
-      Width = 277
+      Width = 437
       Align = alClient
       AutoFill = True
       Caption = 'Elige un juego'
@@ -57,12 +57,12 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     Left = 4
     Height = 113
     Top = 4
-    Width = 632
+    Width = 792
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ClientHeight = 113
-    ClientWidth = 632
+    ClientWidth = 792
     TabOrder = 0
     object iLogo: TImage
       Cursor = crHandPoint
@@ -70,7 +70,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       Height = 113
       Hint = 'Pulsa para ver información de la versión de LNSCompFE.'
       Top = 0
-      Width = 632
+      Width = 792
       Align = alClient
       AutoSize = True
       Center = True
@@ -2332,9 +2332,9 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   end
   object pBottom: TPanel[4]
     Left = 4
-    Height = 26
-    Top = 343
-    Width = 632
+    Height = 30
+    Top = 433
+    Width = 792
     Align = alBottom
     AutoSize = True
     BevelOuter = bvNone
@@ -2344,54 +2344,54 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     ChildSizing.ShrinkVertical = crsHomogenousChildResize
     ChildSizing.Layout = cclTopToBottomThenLeftToRight
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 26
-    ClientWidth = 632
+    ClientHeight = 30
+    ClientWidth = 792
     TabOrder = 4
     object bJugar: TBitBtn
-      Left = 16
-      Height = 26
+      Left = 29
+      Height = 30
       Top = 0
-      Width = 103
+      Width = 118
       Action = actGrabarINP
       TabOrder = 0
     end
     object bReproducir: TBitBtn
-      Left = 135
-      Height = 26
+      Left = 176
+      Height = 30
       Top = 0
-      Width = 126
+      Width = 146
       Action = actReproducirINP
       TabOrder = 1
     end
     object bGrabarAVI: TBitBtn
-      Left = 277
-      Height = 26
+      Left = 351
+      Height = 30
       Top = 0
-      Width = 95
+      Width = 108
       Action = actGrabarAVI
       TabOrder = 2
     end
     object bProbar: TBitBtn
-      Left = 388
-      Height = 26
+      Left = 488
+      Height = 30
       Top = 0
-      Width = 114
+      Width = 132
       Action = actProbarJuego
       TabOrder = 3
     end
     object bConfig: TBitBtn
-      Left = 518
-      Height = 26
+      Left = 649
+      Height = 30
       Top = 0
-      Width = 103
+      Width = 116
       Action = actEditarConfig
       TabOrder = 4
     end
   end
   object pRight: TPanel[5]
-    Left = 294
-    Height = 191
-    Top = 148
+    Left = 454
+    Height = 276
+    Top = 153
     Width = 342
     Align = alRight
     BevelOuter = bvNone
@@ -2399,30 +2399,30 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   end
   object pTop2: TPanel[6]
     Left = 4
-    Height = 23
+    Height = 28
     Top = 121
-    Width = 632
+    Width = 792
     Align = alTop
     AutoSize = True
     BevelOuter = bvNone
     ChildSizing.HorizontalSpacing = 4
-    ClientHeight = 23
-    ClientWidth = 632
+    ClientHeight = 28
+    ClientWidth = 792
     TabOrder = 6
     object pEjecutable: TPanel
       Left = 205
-      Height = 23
+      Height = 28
       Top = 0
-      Width = 427
+      Width = 587
       Align = alClient
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 4
-      ClientHeight = 23
-      ClientWidth = 427
+      ClientHeight = 28
+      ClientWidth = 587
       TabOrder = 1
       object bOpenFolder: TSpeedButton
         Left = 0
-        Height = 23
+        Height = 28
         Top = 0
         Width = 23
         Action = actpuCarpetas
@@ -2432,9 +2432,9 @@ inherited frmLNSCompFE: TfrmLNSCompFE
       end
       object lMAMEExe: TLabel
         Left = 27
-        Height = 23
+        Height = 28
         Top = 0
-        Width = 400
+        Width = 560
         Align = alClient
         Caption = 'Ejecutable de MAME'
         Layout = tlCenter
@@ -2444,30 +2444,30 @@ inherited frmLNSCompFE: TfrmLNSCompFE
     end
     object pNick: TPanel
       Left = 0
-      Height = 23
+      Height = 28
       Top = 0
       Width = 201
       Align = alLeft
       BevelOuter = bvNone
       ChildSizing.HorizontalSpacing = 4
-      ClientHeight = 23
+      ClientHeight = 28
       ClientWidth = 201
       TabOrder = 0
       object lNick: TLabel
         Left = 0
-        Height = 23
+        Height = 28
         Top = 0
-        Width = 27
+        Width = 32
         Align = alLeft
         Caption = 'Nick:'
         Layout = tlCenter
         ParentColor = False
       end
       object eNick: TEdit
-        Left = 31
-        Height = 23
+        Left = 36
+        Height = 28
         Top = 0
-        Width = 170
+        Width = 165
         Align = alClient
         TabOrder = 0
         TextHint = 'Escribe tu nick en el foro LNS'
