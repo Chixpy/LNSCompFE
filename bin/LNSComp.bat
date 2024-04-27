@@ -516,7 +516,7 @@ SET /p $LNSPuntos="Puntuación: "
 IF NOT EXIST %$LNSStatsFolder% MD %$LNSStatsFolder%
 IF NOT EXIST "%$LNSStatsFolder%\%$LNSFichAct%.csv" ECHO "Inicio","Segundos","Puntos"> "%$LNSStatsFolder%\%$LNSFichAct%.csv"
 :: Añadimos la línea a la tabla
-ECHO %$LNSFecha1% %$LNSTiempo1%,%$LNSDiff%,%$LNSPuntos%>> "%$LNSStatsFolder%\%$LNSFichAct%.csv"
+ECHO "%$LNSFecha1% %$LNSTiempo1%","%$LNSDiff%","%$LNSPuntos%" >> "%$LNSStatsFolder%\%$LNSFichAct%.csv"
 
 ECHO.
 ECHO GUARDANDO PARTIDA... inp\%$LNSFichAct%.inp

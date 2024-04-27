@@ -16,37 +16,41 @@ type
   //   es excesivo...
   // Aunque usar un record implica trastear con punteros XD
 
+  { TODO : Dividir el campo puntuación al menos en dos:
+      - Uno para la puntuación numérica en sí (Puntos o tiempo)
+      - Otro (o más) para añadir comentarios (Por ejemplo, nivel de dificultad,
+        personaje, etc.) }
+
   RGrabarINPDatos = record
-    Segundos: integer;
-    Puntuacion: string;
-    Conservar: boolean;
-    OutputMAME: string;
+    Segundos : integer;
+    Puntuacion : string;
+    Conservar : Boolean;
+    OutputMAME : string;
   end;
   PGrabarINPDatos = ^RGrabarINPDatos;
 
   { TfmLNSCFEGrabarINP }
 
   TfmLNSCFEGrabarINP = class(TfmCHXPropEditor)
-    ePuntuacion: TEdit;
-    gbxPuntuacion: TGroupBox;
-    lPuntuacion: TLabel;
-    pEstadisticas: TPanel;
-    pInfo: TPanel;
-    rgbConservar: TRadioGroup;
+    ePuntuacion : TEdit;
+    gbxPuntuacion : TGroupBox;
+    lPuntuacion : TLabel;
+    pEstadisticas : TPanel;
+    pInfo : TPanel;
+    rgbConservar : TRadioGroup;
+
   private
-    FDatos: PGrabarINPDatos;
-    procedure SetDatos(const aDatos: PGrabarINPDatos);
-
-  protected
-    procedure DoSaveData;
-
+    FDatos : PGrabarINPDatos;
+    procedure SetDatos(const aDatos : PGrabarINPDatos);
   public
-    property Datos: PGrabarINPDatos read FDatos write SetDatos;
+    property Datos : PGrabarINPDatos read FDatos write SetDatos;
 
-    class procedure SimpleForm(const aDatos: PGrabarINPDatos;
-      const aGUIConfigIni, aGUIIconsIni: string);
+    class procedure SimpleForm(const aDatos : PGrabarINPDatos;
+      const aGUIConfigIni, aGUIIconsIni : string);
 
-    constructor Create(TheOwner: TComponent); override;
+    procedure SaveFrameData; override;
+
+    constructor Create(TheOwner : TComponent); override;
     destructor Destroy; override;
   end;
 
@@ -56,7 +60,7 @@ implementation
 
 { TfmLNSCFEGrabarINP }
 
-procedure TfmLNSCFEGrabarINP.SetDatos(const aDatos: PGrabarINPDatos);
+procedure TfmLNSCFEGrabarINP.SetDatos(const aDatos : PGrabarINPDatos);
 begin
   if FDatos = aDatos then
     Exit;
@@ -67,13 +71,14 @@ begin
   if Enabled then
   begin
     pEstadisticas.Caption := aDatos^.OutputMAME;
-     // Format('La partida duró %0:d segundos', [aDatos^.Segundos]);
-
+    // Format('La partida duró %0:d segundos', [aDatos^.Segundos]);
   end;
 end;
 
-procedure TfmLNSCFEGrabarINP.DoSaveData;
+procedure TfmLNSCFEGrabarINP.SaveFrameData;
 begin
+  inherited;
+
   if not assigned(Datos) then
     Exit;
 
@@ -81,28 +86,27 @@ begin
   Datos^.Conservar := rgbConservar.ItemIndex = 0;
 end;
 
-class procedure TfmLNSCFEGrabarINP.SimpleForm(const aDatos: PGrabarINPDatos;
-  const aGUIConfigIni, aGUIIconsIni: string);
+class procedure TfmLNSCFEGrabarINP.SimpleForm(const aDatos : PGrabarINPDatos;
+  const aGUIConfigIni, aGUIIconsIni : string);
 var
-  aFrame: TfmLNSCFEGrabarINP;
+  aFrame : TfmLNSCFEGrabarINP;
 begin
   aFrame := TfmLNSCFEGrabarINP.Create(nil);
   try
-  aFrame.Datos := aDatos;
-  aFrame.ButtonClose := True;
+    aFrame.Datos := aDatos;
+    aFrame.ButtonClose := True;
 
-  GenSimpleModalForm(aFrame, 'frmGrabarINP', 'LNSCompFE: Grabar INP', aGUIConfigIni,
-    aGUIIconsIni);
+    GenSimpleModalForm(aFrame, 'frmGrabarINP', 'LNSCompFE: Grabar INP',
+      aGUIConfigIni,
+      aGUIIconsIni);
   finally
     // aFrame.Free; Autoliberado al cerrar el formulario
   end;
 end;
 
-constructor TfmLNSCFEGrabarINP.Create(TheOwner: TComponent);
+constructor TfmLNSCFEGrabarINP.Create(TheOwner : TComponent);
 begin
   inherited Create(TheOwner);
-
-  OnSaveFrameData := @DoSaveData;
 end;
 
 destructor TfmLNSCFEGrabarINP.Destroy;

@@ -9,7 +9,7 @@ uses
   Interfaces, // this includes the LCL widgetset
   Forms,
   // CHX units
-  uCHXRscStr, uCHXConst,
+  uCHXRscStr, uCHXConst, uCHXVerInfo,
   // CHX abstracts
   uaCHXStorable,
   // CHX forms

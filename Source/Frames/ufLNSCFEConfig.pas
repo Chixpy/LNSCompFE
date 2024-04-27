@@ -53,16 +53,15 @@ type
     FConfig: cLNSCFEConfig;
     procedure SetConfig(const aConfig: cLNSCFEConfig);
 
-  protected
-    procedure DoClearFrameData;
-    procedure DoLoadFrameData;
-    procedure DoSaveFrameData;
-
   public
     property Config: cLNSCFEConfig read FConfig write SetConfig;
 
     class function SimpleModalForm(aConfig: cLNSCFEConfig;
       const aConfigIni, aIconsIni: string): integer;
+
+    procedure ClearFrameData; override;
+     procedure LoadFrameData; override;
+     procedure SaveFrameData; override;
 
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -93,8 +92,10 @@ begin
   LoadFrameData;
 end;
 
-procedure TfmLNSCFEConfig.DoClearFrameData;
+procedure TfmLNSCFEConfig.ClearFrameData;
 begin
+  inherited;
+
   // Basico
   eMAMEExe.Clear;
   eImagesFolder.Clear;
@@ -107,8 +108,10 @@ begin
   eParProbarJuego.Clear;
 end;
 
-procedure TfmLNSCFEConfig.DoLoadFrameData;
+procedure TfmLNSCFEConfig.LoadFrameData;
 begin
+  inherited;
+
   Enabled := Assigned(Config);
   if not Enabled then
   begin
@@ -128,8 +131,10 @@ begin
   eParProbarJuego.Text := Config.ParAdicProbarJuego;
 end;
 
-procedure TfmLNSCFEConfig.DoSaveFrameData;
+procedure TfmLNSCFEConfig.SaveFrameData;
 begin
+  inherited;
+
   // Básico
   Config.MAMEExe := eMAMEExe.Text;
   Config.ImagesFolder := eImagesFolder.Text;
@@ -162,10 +167,6 @@ end;
 constructor TfmLNSCFEConfig.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-
-  OnClearFrameData := @DoClearFrameData;
-  OnLoadFrameData := @DoLoadFrameData;
-  OnSaveFrameData := @DoSaveFrameData;
 
   PageControl1.ActivePageIndex := 0;
 end;

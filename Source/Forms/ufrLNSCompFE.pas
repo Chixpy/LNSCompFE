@@ -13,9 +13,9 @@ uses
   // CHX units
   uCHXStrUtils, uCHXDlgUtils,
   // CHX forms
-  ufrCHXForm, ufCHXAbout,
+  ufrCHXForm,
   // CHX frames
-  ufCHXImgListPreview,
+  ufCHXImgListPreview, ufCHXAbout,
   // LNSCompFE classes
   ucLNSCFEConfig,
   // LNSCompFE frames
@@ -52,10 +52,12 @@ const
   krsCSVSep = ',';
 
 
-  // TODO: WolfMAME .181 tiene un fallo respecto al valor por defecto del
-  //   parámetro -inplayout así que lo eliminamos.
-  // Cuando se use otra versión de WolfMAME +0.185 habría que quitarlo
-  //   de los parámetros opcionales.
+  { TODO: WolfMAME .181 tiene un fallo respecto al valor por defecto del
+      parámetro -inplayout así que lo eliminamos dándole un valor.
+
+    Cuando en las competiciones se use otra versión de WolfMAME (+0.185)
+      habría que quitarlo de los parámetros opcionales.
+  }
   krsParamCrearINPOpc = '-inplayout standard';
   krsParamCrearINPFmt = '-afs -throttle -speed 1 -rec %0:s.inp';
 
@@ -159,6 +161,7 @@ type
     FMAMEExe: string;
     FNombreJuegos: TStringList;
     FNVRAMFolder: string;
+    FRunFromCM : Boolean;
     procedure SetConfigFile(const aConfigFile: string);
     procedure SetDIFFFolder(const aDIFFFolder: string);
     procedure SetHIFolder(const aHIFolder: string);
@@ -167,6 +170,7 @@ type
     procedure SetJuego(const aJuego: string);
     procedure SetMAMEExe(const aMAMEExe: string);
     procedure SetNVRAMFolder(const aNVRAMFolder: string);
+    procedure SetRunFromCM(const AValue : Boolean);
 
   protected
     property ConfigFile: string read FConfigFile write SetConfigFile;
@@ -199,6 +203,13 @@ type
 
     property ImpPreview: TfmCHXImgListPreview read FImpPreview;
     //< Frame para previsualización de imágenes
+
+    property RunFromCM: Boolean read FRunFromCM write SetRunFromCM;
+    {< ¿El juego ha sido ejecutado desde la línea de comandos?
+
+      Si el juego ha sido ejecutado desde la linea de comandos entonces cualquier
+        en la configuración no se guardará.
+    }
 
     procedure ActualizarNombreJuegos;
     //< Actualiza el nombre de los juegos
@@ -234,6 +245,8 @@ implementation
 { TfrmLNSCompFE }
 
 procedure TfrmLNSCompFE.FormCreate(Sender: TObject);
+var
+  Idx : Integer;
 begin
   Application.Title := Format(krsAppTitleFmt,
     [Application.Title, GetFileVersion]);
@@ -272,7 +285,36 @@ begin
   //   (si se hace al final se evitan redibujados)
   ImpPreview.Parent := pRight;
 
+
+  // LINEA DE COMMANDOS
+  // ------------------
+
+  // Parseamos los parámetros de la línea de comandos para ejecutar un juego
+  //   directamente.
+  // De esta forma pordemos integrarlo con Emuteca.
+
+  RunFromCM := False;
+  Idx := 0; // Quitamos warning
+
+  Application.CaseSensitiveOptions := False;
+  Application.CheckOptions('f','file');
+
+  if Application.HasOption('f','file') then
+  begin
+    // Añadimos el juego a la lista
+    Idx := Config.Juegos.Add(Application.GetOptionValue('f','file'));
+    RunFromCM := True;
+  end;
+
   ActualizarConfig;
+
+  // Si se ha definido un juego está en la línea de commandos seleccionarlo y
+  //   ejecutarlo directamente
+  if RunFromCM then
+  begin
+    rgbJuegos.ItemIndex := Idx;
+    actGrabarINP.Execute;
+  end;
 end;
 
 procedure TfrmLNSCompFE.actEditarConfigExecute(Sender: TObject);
@@ -333,8 +375,13 @@ end;
 
 procedure TfrmLNSCompFE.FormDestroy(Sender: TObject);
 begin
-  Config.Nick := eNick.Text;
-  Config.SaveToFile('', False); // No borrar el contenido previo del archivo
+  // Si se ha ejecutado el juego desde la línea de commandos no se guarda la
+  //   configuración modificada.
+  if not RunFromCM then
+  begin
+    Config.Nick := eNick.Text;
+    Config.SaveToFile('', False); // No borrar el contenido previo del archivo
+  end;
   Config.Free;
 
   ImageList.Free;
@@ -344,19 +391,22 @@ begin
 end;
 
 procedure TfrmLNSCompFE.iLogoClick(Sender: TObject);
+var
+  Info: TStringList;
 begin
-  Application.CreateForm(TfrmCHXAbout, frmCHXAbout);
+  Info := TStringList.Create;
+  Info.Add('(C) 2018-2024 Chixpy - GNU-GPL 3.0');
+  Info.Add('');
 
-  frmCHXAbout.mAditional.Lines.Add('(C) 2018 Chixpy - GNU-GPL 3.0');
-  frmCHXAbout.mAditional.Lines.Add('');
+  Info.Add(Format('LNSCompFE: %0:s', [GetCurrentDirUTF8]));
+  Info.Add('');
+  Info.Add(Format('Imágenes: %0:s', [ImagesFolder]));
+  Info.Add(Format('INP: %0:s', [INPFolder]));
+  Info.Add(Format('HI: %0:s', [HIFolder]));
+  Info.Add(Format('NVRAM: %0:s', [NVRAMFolder]));
+  Info.Add(Format('DIFF: %0:s', [DIFFFolder]));
 
-  frmCHXAbout.mAditional.Lines.Add(Format('Imágenes: %0:s', [ImagesFolder]));
-  frmCHXAbout.mAditional.Lines.Add(Format('INP: %0:s', [INPFolder]));
-  frmCHXAbout.mAditional.Lines.Add(Format('HI: %0:s', [HIFolder]));
-  frmCHXAbout.mAditional.Lines.Add(Format('NVRAM: %0:s', [NVRAMFolder]));
-  frmCHXAbout.mAditional.Lines.Add(Format('DIFF: %0:s', [DIFFFolder]));
-
-  frmCHXAbout.ShowModal;
+  TfmCHXAbout.SimpleFormAbout(Info,'','');
 end;
 
 procedure TfrmLNSCompFE.rgbJuegosResize(Sender: TObject);
@@ -372,12 +422,15 @@ begin
   if rgbJuegos.Font.Height = 0 then
   begin
     FontData := GetFontData(rgbJuegos.Font.Handle);
-    AlturaTexto := ((FontData.Height * 72) div
-      rgbJuegos.Font.PixelsPerInch) * 2;
+    AlturaTexto := FontData.Height;
   end;
 
-  // Suele ser negativo por alguna razón...
-  AlturaTexto := abs(AlturaTexto);
+  // Windows: Si TFontData.Height
+  //   - Es negativo: Está expresado en 1/72 pulgadas
+  //   - Es positivo: Está expresado en pixeles
+
+  if AlturaTexto < 0 then
+    AlturaTexto := abs((AlturaTexto * 72) div (rgbJuegos.Font.PixelsPerInch * 2));
 
   rgbJuegos.Columns := (rgbJuegos.Items.Count div
     ((rgbJuegos.ClientHeight div AlturaTexto) + 1)) + 1;
@@ -451,6 +504,12 @@ end;
 procedure TfrmLNSCompFE.SetNVRAMFolder(const aNVRAMFolder: string);
 begin
   FNVRAMFolder := SetAsFolder(aNVRAMFolder);
+end;
+
+procedure TfrmLNSCompFE.SetRunFromCM(const AValue : Boolean);
+begin
+  if FRunFromCM = AValue then Exit;
+  FRunFromCM := AValue;
 end;
 
 procedure TfrmLNSCompFE.ActualizarNombreJuegos;
@@ -639,7 +698,6 @@ begin
     rgbJuegos.ItemIndex := 0; // Seleccionamos un juego
 
   rgbJuegosResize(rgbJuegos); // Recolocando items...
-
 end;
 
 procedure TfrmLNSCompFE.ActualizarMedia;
@@ -714,7 +772,8 @@ var
   Parametros: string;
   HoraInicio: TDateTime;
   DatosGrabarINP: RGrabarINPDatos;
-  aCSV: TStringList;
+  aCSV, TempStrLst: TStringList;
+  TempPts: string;
   i: integer;
 begin
   if Juego = '' then
@@ -768,12 +827,25 @@ begin
         // Añadiendo la cabecera
         aCSV.Add(krsStatsHeader);
 
+      // Formateando un poco la puntuación para el CSV
+      TempPts := UTF8QuotedStr(DatosGrabarINP.Puntuacion, '"');
+      TempPts := UTF8TextReplace(TempPts, ',', '","');
+      TempPts := UTF8TextReplace(TempPts, ' - ', '","');
+
+      // Una TStringList lo hace mejor que ha mano
+      TempStrLst := TStringList.Create;
       // DateTimeToStr sin format settings, guarda las fechas igual que lo
       //   hace el DOS ;-D
-      aCSV.Add(DateTimeToStr(HoraInicio) + krsCSVSep +
-        IntToStr(DatosGrabarINP.Segundos) + krsCSVSep +
-        DatosGrabarINP.Puntuacion);
+      TempStrLst.Add(DateTimeToStr(HoraInicio));
+      TempStrLst.Add(IntToStr(DatosGrabarINP.Segundos));
+
+      TempPts := TempStrLst.CommaText + TempPts;
+
+      TempStrLst.Free;
+
+      aCSV.Add(TempPts);
       aCSV.SaveToFile(aFileName);
+
     finally
       aCSV.Free;
     end;
@@ -793,7 +865,7 @@ begin
         Inc(i);
       end;
 
-      // Por el momentp no exite CopyFileUTF8...
+      // Por el momento no exite CopyFileUTF8...
       CopyFile(UTF8ToSys(INPFolder + Juego + '.inp'),
         UTF8ToSys(aFileName), True);
     end;
