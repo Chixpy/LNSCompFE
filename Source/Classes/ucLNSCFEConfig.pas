@@ -140,9 +140,8 @@ procedure cLNSCFEConfig.ResetDefaultConfig;
 begin
   Nick := '';
   MAMEExe := '';
-  AutoMAMEList.CommaText :=
-    'mamearcade.exe,wolfmame.exe,wolfmame64.exe,' +
-    'wolfmame32.exe,mame.exe,mame64.exe,mame32.exe';
+  AutoMAMEList.CommaText := 'wolfmame.exe,wolfmame64.exe,' +
+    'wolfmame32.exe,mame.exe,mame64.exe,mame32.exe,mamearcade.exe';
   ImagesFolder := '';
   Juegos.Clear;
 end;

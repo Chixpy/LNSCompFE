@@ -11,7 +11,7 @@ uses
   // Misc units
   uVersionSupport,
   // CHX units
-  uCHXStrUtils, uCHXDlgUtils,
+  uCHXStrUtils, uCHXDlgUtils, uCHXFileUtils,
   // CHX forms
   ufrCHXForm,
   // CHX frames
@@ -49,7 +49,6 @@ const
   krsBackupExt = '.bak';
   krsAVIExt = '.avi';
   krsCSVExt = '.csv';
-  krsCSVSep = ',';
 
 
   { TODO: WolfMAME .181 tiene un fallo respecto al valor por defecto del
@@ -93,118 +92,123 @@ type
   { TfrmLNSCompFE }
 
   TfrmLNSCompFE = class(TfrmCHXForm)
-    actEditarConfig: TAction;
-    actGrabarAVI: TAction;
-    actGrabarINP: TAction;
-    actAbrirCarpetaMAME: TAction;
-    actAbrirCarpetaINP: TAction;
-    actAbrirCarpetaImages: TAction;
-    actAbrirCarpetaNVRAM: TAction;
-    actpuCarpetas: TAction;
-    actReproducirINP: TAction;
-    actProbarJuego: TAction;
-    ActionList: TActionList;
-    bConfig: TBitBtn;
-    bGrabarAVI: TBitBtn;
-    bJugar: TBitBtn;
-    bOpenFolder: TSpeedButton;
-    bProbar: TBitBtn;
-    bReproducir: TBitBtn;
-    eNick: TEdit;
-    ilActions: TImageList;
-    iLogo: TImage;
-    lMAMEExe: TLabel;
-    lNick: TLabel;
-    pmiAbrirNVRAMFolder: TMenuItem;
-    pmiAbrirImagesFolder: TMenuItem;
-    pmiAbrirINPFolder: TMenuItem;
-    pmiAbrirMAMEFolder: TMenuItem;
-    OpenINP: TOpenDialog;
-    pBottom: TPanel;
-    pEjecutable: TPanel;
-    pMain: TPanel;
-    pNick: TPanel;
-    pRight: TPanel;
-    pTop: TPanel;
-    pTop2: TPanel;
-    pumAbrirCarpetas: TPopupMenu;
-    rgbJuegos: TRadioGroup;
-    Splitter1: TSplitter;
-    StatusBar1: TStatusBar;
-    procedure actAbrirCarpetaImagesExecute(Sender: TObject);
-    procedure actAbrirCarpetaINPExecute(Sender: TObject);
-    procedure actAbrirCarpetaMAMEExecute(Sender: TObject);
-    procedure actAbrirCarpetaNVRAMExecute(Sender: TObject);
-    procedure actEditarConfigExecute(Sender: TObject);
-    procedure actGrabarAVIExecute(Sender: TObject);
-    procedure actGrabarINPExecute(Sender: TObject);
-    procedure actProbarJuegoExecute(Sender: TObject);
-    procedure actpuCarpetasExecute(Sender: TObject);
-    procedure actReproducirINPExecute(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure iLogoClick(Sender: TObject);
-    procedure rgbJuegosResize(Sender: TObject);
-    procedure rgbJuegosSelectionChanged(Sender: TObject);
+    actEditarConfig : TAction;
+    actGrabarAVI : TAction;
+    actGrabarINP : TAction;
+    actAbrirCarpetaMAME : TAction;
+    actAbrirCarpetaINP : TAction;
+    actAbrirCarpetaImages : TAction;
+    actAbrirCarpetaNVRAM : TAction;
+    actpuCarpetas : TAction;
+    actReproducirINP : TAction;
+    actProbarJuego : TAction;
+    ActionList : TActionList;
+    bConfig : TBitBtn;
+    bGrabarAVI : TBitBtn;
+    bJugar : TBitBtn;
+    bOpenFolder : TSpeedButton;
+    bProbar : TBitBtn;
+    bReproducir : TBitBtn;
+    eNick : TEdit;
+    ilActions : TImageList;
+    iLogo : TImage;
+    lMAMEExe : TLabel;
+    lNick : TLabel;
+    pmiAbrirNVRAMFolder : TMenuItem;
+    pmiAbrirImagesFolder : TMenuItem;
+    pmiAbrirINPFolder : TMenuItem;
+    pmiAbrirMAMEFolder : TMenuItem;
+    OpenINP : TOpenDialog;
+    pBottom : TPanel;
+    pEjecutable : TPanel;
+    pMain : TPanel;
+    pNick : TPanel;
+    pRight : TPanel;
+    pTop : TPanel;
+    pTop2 : TPanel;
+    pumAbrirCarpetas : TPopupMenu;
+    rgbJuegos : TRadioGroup;
+    Splitter1 : TSplitter;
+    StatusBar1 : TStatusBar;
+    procedure actAbrirCarpetaImagesExecute(Sender : TObject);
+    procedure actAbrirCarpetaINPExecute(Sender : TObject);
+    procedure actAbrirCarpetaMAMEExecute(Sender : TObject);
+    procedure actAbrirCarpetaNVRAMExecute(Sender : TObject);
+    procedure actEditarConfigExecute(Sender : TObject);
+    procedure actGrabarAVIExecute(Sender : TObject);
+    procedure actGrabarINPExecute(Sender : TObject);
+    procedure actProbarJuegoExecute(Sender : TObject);
+    procedure actpuCarpetasExecute(Sender : TObject);
+    procedure actReproducirINPExecute(Sender : TObject);
+    procedure FormCreate(Sender : TObject);
+    procedure FormDestroy(Sender : TObject);
+    procedure iLogoClick(Sender : TObject);
+    procedure rgbJuegosResize(Sender : TObject);
+    procedure rgbJuegosSelectionChanged(Sender : TObject);
 
   private
-    FConfig: cLNSCFEConfig;
-    FConfigFile: string;
-    FDIFFFolder: string;
-    FHIFolder: string;
-    FImageExt: TStringList;
-    FImageList: TStringList;
-    FImagesFolder: string;
-    FImpPreview: TfmCHXImgListPreview;
-    FINPFolder: string;
-    FJuego: string;
-    FMAMEExe: string;
-    FNombreJuegos: TStringList;
-    FNVRAMFolder: string;
+    FConfig : cLNSCFEConfig;
+    FConfigFile : string;
+    FDIFFFolder : string;
+    FHIFolder : string;
+    FImageExt : TStringList;
+    FImageList : TStringList;
+    FImagesFolder : string;
+    FImpPreview : TfmCHXImgListPreview;
+    FINPFolder : string;
+    FJuego : string;
+    FMAMEExe : string;
+    FNombreJuegos : TStringList;
+    FNVRAMFolder : string;
     FRunFromCM : Boolean;
-    procedure SetConfigFile(const aConfigFile: string);
-    procedure SetDIFFFolder(const aDIFFFolder: string);
-    procedure SetHIFolder(const aHIFolder: string);
-    procedure SetImagesFolder(const aImagesFolder: string);
-    procedure SetINPFolder(const aINPFolder: string);
-    procedure SetJuego(const aJuego: string);
-    procedure SetMAMEExe(const aMAMEExe: string);
-    procedure SetNVRAMFolder(const aNVRAMFolder: string);
+    procedure SetConfigFile(const aConfigFile : string);
+    procedure SetDIFFFolder(const aDIFFFolder : string);
+    procedure SetHIFolder(const aHIFolder : string);
+    procedure SetImagesFolder(const aImagesFolder : string);
+    procedure SetINPFolder(const aINPFolder : string);
+    procedure SetJuego(const aJuego : string);
+    procedure SetMAMEExe(const aMAMEExe : string);
+    procedure SetNVRAMFolder(const aNVRAMFolder : string);
     procedure SetRunFromCM(const AValue : Boolean);
 
   protected
-    property ConfigFile: string read FConfigFile write SetConfigFile;
+    DatosGrabarINP : RGrabarINPDatos;
+    {< Datos para grabar el INP y guardar los comentarios fijados entre
+         los distintos intentos.
+    }
+
+    property ConfigFile : string read FConfigFile write SetConfigFile;
     //< Nombre del fichero de configuración de LNSCompFE
 
-    property MAMEExe: string read FMAMEExe write SetMAMEExe;
+    property MAMEExe : string read FMAMEExe write SetMAMEExe;
     //< Ruta del ejecutable MAME
-    property ImagesFolder: string read FImagesFolder write SetImagesFolder;
+    property ImagesFolder : string read FImagesFolder write SetImagesFolder;
     //< Carperta de imágenes
-    property INPFolder: string read FINPFolder write SetINPFolder;
+    property INPFolder : string read FINPFolder write SetINPFolder;
     //< Carpeta de INP
-    property HIFolder: string read FHIFolder write SetHIFolder;
+    property HIFolder : string read FHIFolder write SetHIFolder;
     //< Carpeta de Hiscores
-    property NVRAMFolder: string read FNVRAMFolder write SetNVRAMFolder;
+    property NVRAMFolder : string read FNVRAMFolder write SetNVRAMFolder;
     //< Carpeta de NVRAM
-    property DIFFFolder: string read FDIFFFolder write SetDIFFFolder;
+    property DIFFFolder : string read FDIFFFolder write SetDIFFFolder;
     //< Carpeta de DIFF de CHDS
 
-    property Config: cLNSCFEConfig read FConfig;
+    property Config : cLNSCFEConfig read FConfig;
     //< Configuración de LNSConfig
 
-    property Juego: string read FJuego write SetJuego;
+    property Juego : string read FJuego write SetJuego;
     //< Clave del juego seleccionado
-    property NombreJuegos: TStringList read FNombreJuegos;
+    property NombreJuegos : TStringList read FNombreJuegos;
     //< Lista con el nombre completo de los juegos
-    property ImageList: TStringList read FImageList;
+    property ImageList : TStringList read FImageList;
     //< Lista de imágenes encontradas
-    property ImageExt: TStringList read FImageExt;
+    property ImageExt : TStringList read FImageExt;
     //< Formatos de imagen soportados
 
-    property ImpPreview: TfmCHXImgListPreview read FImpPreview;
+    property ImpPreview : TfmCHXImgListPreview read FImpPreview;
     //< Frame para previsualización de imágenes
 
-    property RunFromCM: Boolean read FRunFromCM write SetRunFromCM;
+    property RunFromCM : Boolean read FRunFromCM write SetRunFromCM;
     {< ¿El juego ha sido ejecutado desde la línea de comandos?
 
       Si el juego ha sido ejecutado desde la linea de comandos entonces cualquier
@@ -236,7 +240,7 @@ type
   end;
 
 var
-  frmLNSCompFE: TfrmLNSCompFE;
+  frmLNSCompFE : TfrmLNSCompFE;
 
 implementation
 
@@ -244,9 +248,9 @@ implementation
 
 { TfrmLNSCompFE }
 
-procedure TfrmLNSCompFE.FormCreate(Sender: TObject);
+procedure TfrmLNSCompFE.FormCreate(Sender : TObject);
 var
-  Idx : Integer;
+  Idx : integer;
 begin
   Application.Title := Format(krsAppTitleFmt,
     [Application.Title, GetFileVersion]);
@@ -297,12 +301,12 @@ begin
   Idx := 0; // Quitamos warning
 
   Application.CaseSensitiveOptions := False;
-  Application.CheckOptions('f','file');
+  Application.CheckOptions('f', 'file');
 
-  if Application.HasOption('f','file') then
+  if Application.HasOption('f', 'file') then
   begin
     // Añadimos el juego a la lista
-    Idx := Config.Juegos.Add(Application.GetOptionValue('f','file'));
+    Idx := Config.Juegos.Add(Application.GetOptionValue('f', 'file'));
     RunFromCM := True;
   end;
 
@@ -312,68 +316,69 @@ begin
   //   ejecutarlo directamente
   if RunFromCM then
   begin
+    Self.Show; // TODO: No me gusta esto aquí...
     rgbJuegos.ItemIndex := Idx;
     actGrabarINP.Execute;
   end;
 end;
 
-procedure TfrmLNSCompFE.actEditarConfigExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actEditarConfigExecute(Sender : TObject);
 begin
   TfmLNSCFEConfig.SimpleModalForm(Config, ConfigFile, '');
 
   ActualizarConfig;
 end;
 
-procedure TfrmLNSCompFE.actAbrirCarpetaMAMEExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actAbrirCarpetaMAMEExecute(Sender : TObject);
 begin
   if DirectoryExistsUTF8(ExtractFilePath(MAMEExe)) then
     OpenDocument(ExtractFilePath(MAMEExe));
 end;
 
-procedure TfrmLNSCompFE.actAbrirCarpetaNVRAMExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actAbrirCarpetaNVRAMExecute(Sender : TObject);
 begin
   if DirectoryExistsUTF8(NVRAMFolder) then
     OpenDocument(NVRAMFolder);
 end;
 
-procedure TfrmLNSCompFE.actAbrirCarpetaINPExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actAbrirCarpetaINPExecute(Sender : TObject);
 begin
   if DirectoryExistsUTF8(INPFolder) then
     OpenDocument(INPFolder);
 end;
 
-procedure TfrmLNSCompFE.actAbrirCarpetaImagesExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actAbrirCarpetaImagesExecute(Sender : TObject);
 begin
   if DirectoryExistsUTF8(ImagesFolder) then
     OpenDocument(ImagesFolder);
 end;
 
-procedure TfrmLNSCompFE.actGrabarAVIExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actGrabarAVIExecute(Sender : TObject);
 begin
   CrearAVI;
 end;
 
-procedure TfrmLNSCompFE.actGrabarINPExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actGrabarINPExecute(Sender : TObject);
 begin
   CrearINP;
 end;
 
-procedure TfrmLNSCompFE.actProbarJuegoExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actProbarJuegoExecute(Sender : TObject);
 begin
   ProbarJuego;
 end;
 
-procedure TfrmLNSCompFE.actpuCarpetasExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actpuCarpetasExecute(Sender : TObject);
 begin
   pumAbrirCarpetas.PopUp;
 end;
 
-procedure TfrmLNSCompFE.actReproducirINPExecute(Sender: TObject);
+procedure TfrmLNSCompFE.actReproducirINPExecute(Sender : TObject);
 begin
   ReproducirINP;
 end;
 
-procedure TfrmLNSCompFE.FormDestroy(Sender: TObject);
+procedure TfrmLNSCompFE.FormDestroy(Sender : TObject);
 begin
   // Si se ha ejecutado el juego desde la línea de commandos no se guarda la
   //   configuración modificada.
@@ -390,9 +395,9 @@ begin
   NombreJuegos.Free;
 end;
 
-procedure TfrmLNSCompFE.iLogoClick(Sender: TObject);
+procedure TfrmLNSCompFE.iLogoClick(Sender : TObject);
 var
-  Info: TStringList;
+  Info : TStringList;
 begin
   Info := TStringList.Create;
   Info.Add('(C) 2018-2024 Chixpy - GNU-GPL 3.0');
@@ -406,13 +411,15 @@ begin
   Info.Add(Format('NVRAM: %0:s', [NVRAMFolder]));
   Info.Add(Format('DIFF: %0:s', [DIFFFolder]));
 
-  TfmCHXAbout.SimpleFormAbout(Info,'','');
+  TfmCHXAbout.SimpleFormAbout(Info, '', '');
+
+  Info.Free;
 end;
 
-procedure TfrmLNSCompFE.rgbJuegosResize(Sender: TObject);
+procedure TfrmLNSCompFE.rgbJuegosResize(Sender : TObject);
 var
-  FontData: TFontData;
-  AlturaTexto: integer;
+  FontData : TFontData;
+  AlturaTexto : integer;
 begin
   // Definimos el número de columnas en base a la cantidad de items, tamaño
   //   del texto y tamaño del RadioGroup.
@@ -430,13 +437,14 @@ begin
   //   - Es positivo: Está expresado en pixeles
 
   if AlturaTexto < 0 then
-    AlturaTexto := abs((AlturaTexto * 72) div (rgbJuegos.Font.PixelsPerInch * 2));
+    AlturaTexto := abs((AlturaTexto * 72) div
+      (rgbJuegos.Font.PixelsPerInch * 2));
 
   rgbJuegos.Columns := (rgbJuegos.Items.Count div
     ((rgbJuegos.ClientHeight div AlturaTexto) + 1)) + 1;
 end;
 
-procedure TfrmLNSCompFE.rgbJuegosSelectionChanged(Sender: TObject);
+procedure TfrmLNSCompFE.rgbJuegosSelectionChanged(Sender : TObject);
 begin
   if rgbJuegos.ItemIndex >= 0 then
     Juego := Config.Juegos[rgbJuegos.ItemIndex]
@@ -446,34 +454,33 @@ begin
   ActualizarMedia;
 end;
 
-procedure TfrmLNSCompFE.SetConfigFile(const aConfigFile: string);
+procedure TfrmLNSCompFE.SetConfigFile(const aConfigFile : string);
 begin
   FConfigFile := SetAsAbsoluteFile(aConfigFile, ProgramDirectory);
 end;
 
-procedure TfrmLNSCompFE.SetDIFFFolder(const aDIFFFolder: string);
+procedure TfrmLNSCompFE.SetDIFFFolder(const aDIFFFolder : string);
 begin
   FDIFFFolder := SetAsFolder(aDIFFFolder);
 end;
 
-procedure TfrmLNSCompFE.SetHIFolder(const aHIFolder: string);
+procedure TfrmLNSCompFE.SetHIFolder(const aHIFolder : string);
 begin
   FHIFolder := SetAsFolder(aHIFolder);
 end;
 
-
-procedure TfrmLNSCompFE.SetImagesFolder(const aImagesFolder: string);
+procedure TfrmLNSCompFE.SetImagesFolder(const aImagesFolder : string);
 begin
   FImagesFolder := SetAsFolder(SetAsAbsoluteFile(aImagesFolder,
     ProgramDirectory));
 end;
 
-procedure TfrmLNSCompFE.SetINPFolder(const aINPFolder: string);
+procedure TfrmLNSCompFE.SetINPFolder(const aINPFolder : string);
 begin
   FINPFolder := SetAsFolder(aINPFolder);
 end;
 
-procedure TfrmLNSCompFE.SetJuego(const aJuego: string);
+procedure TfrmLNSCompFE.SetJuego(const aJuego : string);
 begin
   if FJuego = aJuego then
     Exit;
@@ -496,12 +503,12 @@ begin
   end;
 end;
 
-procedure TfrmLNSCompFE.SetMAMEExe(const aMAMEExe: string);
+procedure TfrmLNSCompFE.SetMAMEExe(const aMAMEExe : string);
 begin
   FMAMEExe := SetAsAbsoluteFile(aMAMEExe, ProgramDirectory);
 end;
 
-procedure TfrmLNSCompFE.SetNVRAMFolder(const aNVRAMFolder: string);
+procedure TfrmLNSCompFE.SetNVRAMFolder(const aNVRAMFolder : string);
 begin
   FNVRAMFolder := SetAsFolder(aNVRAMFolder);
 end;
@@ -514,9 +521,9 @@ end;
 
 procedure TfrmLNSCompFE.ActualizarNombreJuegos;
 var
-  i: integer;
-  aJuego: string;
-  aIni: TMemIniFile;
+  i : integer;
+  aJuego : string;
+  aIni : TMemIniFile;
 begin
   NombreJuegos.Clear;
 
@@ -584,10 +591,10 @@ end;
 
 procedure TfrmLNSCompFE.ActualizarConfig;
 
-  function LeeMAMEConfig(aMAMEIni: TStringList; const Key: string): string;
+  function LeeMAMEConfig(aMAMEIni : TStringList; const Key : string) : string;
   var
-    i: integer;
-    aLine: string;
+    i : integer;
+    aLine : string;
   begin
     Result := '';
 
@@ -603,9 +610,9 @@ procedure TfrmLNSCompFE.ActualizarConfig;
   end;
 
 var
-  i: integer;
-  MAMEFolder: string;
-  MAMEIni: TStringList;
+  i : integer;
+  MAMEFolder : string;
+  MAMEIni : TStringList;
 begin
   // Limpiamos variables y lista de juegos.
   Juego := '';
@@ -662,8 +669,10 @@ begin
       MAMEIni.LoadFromFile(MAMEFolder + krsMAMEIni);
       // Si el directorio de imágenes ya está definido, no cambiarlo.
       if ImagesFolder = '' then
+      begin
         ImagesFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
           krsMAMEIniKeySnapDir), MAMEFolder);
+      end;
       INPFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
         krsMAMEIniKeyInpDir), MAMEFolder);
       NVRAMFolder := CreateAbsolutePath(LeeMAMEConfig(MAMEIni,
@@ -702,8 +711,8 @@ end;
 
 procedure TfrmLNSCompFE.ActualizarMedia;
 var
-  i: integer;
-  aFile: string;
+  i : integer;
+  aFile : string;
 begin
   ImpPreview.FileList := nil;
   ImageList.Clear;
@@ -736,12 +745,12 @@ end;
 
 procedure TfrmLNSCompFE.NVRAMBackup;
 var
-  aFile: string;
+  aFile : string;
 begin
   if Juego = '' then
     Exit;
 
-  // Se presupone que hemos la configuración de MAME
+  // Se presupone que hemos leido la configuración de MAME
   // Renombramos los archivos
 
   aFile := HIFolder + Juego;
@@ -768,13 +777,12 @@ end;
 
 procedure TfrmLNSCompFE.CrearINP;
 var
-  MAMEFolder, CurrFolder, aFileName: string;
-  Parametros: string;
-  HoraInicio: TDateTime;
-  DatosGrabarINP: RGrabarINPDatos;
-  aCSV, TempStrLst: TStringList;
-  TempPts: string;
-  i: integer;
+  MAMEFolder, CurrFolder, aFileName : string;
+  Parametros : string;
+  HoraInicio : TDateTime;
+  aCSV, TempStrLst : TStringList;
+  TempPts : string;
+  i : integer;
 begin
   if Juego = '' then
     Exit;
@@ -798,13 +806,13 @@ begin
 
   RunCommand('"' + MAMEExe + '" ' + Parametros, DatosGrabarINP.OutputMAME);
 
-  DatosGrabarINP.Segundos := SecondsBetween(Now, HoraInicio);
+  DatosGrabarINP.Tiempo := SecondsBetween(Now, HoraInicio);
   DatosGrabarINP.Conservar := False;
 
   NVRAMRestore;
 
   // Grabando datos y demás
-  if DatosGrabarINP.Segundos < 60 then
+  if DatosGrabarINP.Tiempo < 60 then
   begin
     ShowMessage(Format(rsPartidaCorta, [INPFolder, Juego]));
   end
@@ -827,26 +835,22 @@ begin
         // Añadiendo la cabecera
         aCSV.Add(krsStatsHeader);
 
-      // Formateando un poco la puntuación para el CSV
-      TempPts := UTF8QuotedStr(DatosGrabarINP.Puntuacion, '"');
-      TempPts := UTF8TextReplace(TempPts, ',', '","');
-      TempPts := UTF8TextReplace(TempPts, ' - ', '","');
-
-      // Una TStringList lo hace mejor que ha mano
+      // Una TStringList lo hace mejor que a mano...
       TempStrLst := TStringList.Create;
+
       // DateTimeToStr sin format settings, guarda las fechas igual que lo
       //   hace el DOS ;-D
       TempStrLst.Add(DateTimeToStr(HoraInicio));
-      TempStrLst.Add(IntToStr(DatosGrabarINP.Segundos));
+      TempStrLst.Add(IntToStr(DatosGrabarINP.Tiempo));
+      TempStrLst.Add(IntToStr(DatosGrabarINP.Puntuacion));
+      TempStrLst.Add(CleanFileName(DatosGrabarINP.Comentario[1]));
+      TempStrLst.Add(CleanFileName(DatosGrabarINP.Comentario[2]));
+      TempStrLst.Add(CleanFileName(DatosGrabarINP.Comentario[3]));
 
-      TempPts := TempStrLst.CommaText + TempPts;
-
-      TempStrLst.Free;
-
-      aCSV.Add(TempPts);
+      aCSV.Add(TempStrLst.CommaText);
       aCSV.SaveToFile(aFileName);
-
     finally
+      TempStrLst.Free;
       aCSV.Free;
     end;
 
@@ -854,19 +858,19 @@ begin
     if DatosGrabarINP.Conservar then
     begin
       aFileName := INPFolder + Juego + ' - ' + eNick.Text +
-        ' - ' + DatosGrabarINP.Puntuacion + '.inp';
+        ' - ' + IntToStr(DatosGrabarINP.Puntuacion);
 
-      // Comprobamos que no existe anteriormente
-      i := 1;
-      while FileExistsUTF8(aFileName) do
-      begin
-        aFileName := INPFolder + Juego + ' - ' + eNick.Text +
-          ' - ' + DatosGrabarINP.Puntuacion + ' (' + IntToStr(i) + ').inp';
-        Inc(i);
-      end;
+      if DatosGrabarINP.Comentario[1] <> '' then
+        aFileName += ' - ' + DatosGrabarINP.Comentario[1];
+      if DatosGrabarINP.Comentario[2] <> '' then
+        aFileName += ' - ' + DatosGrabarINP.Comentario[2];
+      if DatosGrabarINP.Comentario[3] <> '' then
+        aFileName += ' - ' + DatosGrabarINP.Comentario[3];
+
+      aFileName := CHXCheckFileRename(aFileName + krsMAMEINPExt);
 
       // Por el momento no exite CopyFileUTF8...
-      CopyFile(UTF8ToSys(INPFolder + Juego + '.inp'),
+      CopyFile(UTF8ToSys(INPFolder + Juego + krsMAMEINPExt),
         UTF8ToSys(aFileName), True);
     end;
   end;
@@ -882,7 +886,7 @@ end;
 
 procedure TfrmLNSCompFE.ReproducirINP;
 var
-  MAMEFolder, CurrFolder, Parametros, sOutput: string;
+  MAMEFolder, CurrFolder, Parametros, sOutput : string;
 begin
   if Juego = '' then
     Exit;
@@ -930,7 +934,7 @@ end;
 
 procedure TfrmLNSCompFE.CrearAVI;
 var
-  MAMEFolder, CurrFolder, Parametros, sOutput: string;
+  MAMEFolder, CurrFolder, Parametros, sOutput : string;
 begin
   if Juego = '' then
     Exit;
@@ -976,7 +980,7 @@ end;
 
 procedure TfrmLNSCompFE.ProbarJuego;
 var
-  MAMEFolder, CurrFolder, Parametros, sOutput: string;
+  MAMEFolder, CurrFolder, Parametros, sOutput : string;
 begin
   if Juego = '' then
     Exit;
@@ -1008,7 +1012,7 @@ end;
 
 procedure TfrmLNSCompFE.NVRAMRestore;
 var
-  aFile: string;
+  aFile : string;
 begin
   if Juego = '' then
     Exit;

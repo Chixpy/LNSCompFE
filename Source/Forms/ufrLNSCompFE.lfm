@@ -7,7 +7,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   object StatusBar1: TStatusBar[0]
     Left = 4
     Height = 29
-    Top = 467
+    Top = 567
     Width = 792
     AutoHint = True
     Panels = <>
@@ -15,7 +15,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   end
   object Splitter1: TSplitter[1]
     Left = 445
-    Height = 276
+    Height = 376
     Top = 153
     Width = 5
     Align = alRight
@@ -23,17 +23,17 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   end
   object pMain: TPanel[2]
     Left = 4
-    Height = 276
+    Height = 376
     Top = 153
     Width = 437
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 276
+    ClientHeight = 376
     ClientWidth = 437
     TabOrder = 1
     object rgbJuegos: TRadioGroup
       Left = 0
-      Height = 276
+      Height = 376
       Hint = 'Selecciona el juego'
       Top = 0
       Width = 437
@@ -2333,7 +2333,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   object pBottom: TPanel[4]
     Left = 4
     Height = 30
-    Top = 433
+    Top = 533
     Width = 792
     Align = alBottom
     AutoSize = True
@@ -2400,7 +2400,7 @@ inherited frmLNSCompFE: TfrmLNSCompFE
   end
   object pRight: TPanel[5]
     Left = 454
-    Height = 276
+    Height = 376
     Top = 153
     Width = 342
     Align = alRight
